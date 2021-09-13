@@ -1,5 +1,5 @@
 module "acl_controller" {
-  source     = "../../modules/acl-controller"
+  source     = "../modules/acl-controller"
   depends_on = [hcp_consul_cluster.example]
   log_configuration = {
     logDriver = "awslogs"
