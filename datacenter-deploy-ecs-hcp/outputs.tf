@@ -5,10 +5,3 @@ output "client_lb_address" {
 output "consul_ui_address" {
   value = "${hcp_consul_cluster.example.consul_public_endpoint_url}"
 }
-
-# Add this with Karl
-/*
-output "vault_ui_address" {
-  value = "${hcp_vault_cluster.example.vault_public_endpoint_url}"
-}
-*/

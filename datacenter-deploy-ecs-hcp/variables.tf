@@ -11,7 +11,7 @@ variable "region" {
 }
 
 variable "lb_ingress_ip" {
-  description = "Your IP. This is used in the load balancer security groups to ensure only you can access the Consul UI and example application."
+  description = "Your Public IP. This is used in the load balancer security groups to ensure only you can access the Consul UI and example application."
   type        = string
 }
 

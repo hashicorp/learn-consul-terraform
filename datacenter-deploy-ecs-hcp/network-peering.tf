@@ -1,5 +1,3 @@
-data "aws_caller_identity" "current" {}
-
 resource "hcp_aws_network_peering" "default" {
   peering_id      = "${hcp_hvn.server.hvn_id}-peering"
   hvn_id          = hcp_hvn.server.hvn_id

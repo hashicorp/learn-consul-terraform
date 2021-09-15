@@ -1,4 +1,5 @@
 lb_ingress_ip = "YOUR_PUBLIC_IP"
 hcp_client_id = "YOUR_HCP_CLIENT_ID"
 hcp_client_secret = "YOUR_HCP_CLIENT_SECRET"
-region     = "us-west-1"
+region = "us-east-1"
+name = "consul-ecs-hcp"
