@@ -14,13 +14,13 @@ module "acl_controller" {
   ecs_cluster_arn                   = aws_ecs_cluster.this.arn
   region                            = var.region
   subnets                           = module.vpc.private_subnets
-  name_prefix                = var.name
+  name_prefix                       = var.name
 }
 
 module "example_client_app" {
-  source = "../modules/mesh-task"
-  family = "${var.name}-example-client-app"
-  port   = "9090"
+  source            = "../modules/mesh-task"
+  family            = "${var.name}-example-client-app"
+  port              = "9090"
   log_configuration = local.example_client_app_log_config
   container_definitions = [{
     name             = "example-client-app"

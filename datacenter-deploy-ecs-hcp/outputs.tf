@@ -3,5 +3,5 @@ output "client_lb_address" {
 }
 
 output "consul_ui_address" {
-  value = "${hcp_consul_cluster.example.consul_public_endpoint_url}"
+  value = hcp_consul_cluster.example.consul_public_endpoint_url
 }
