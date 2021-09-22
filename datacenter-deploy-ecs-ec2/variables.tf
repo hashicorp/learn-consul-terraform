@@ -20,3 +20,33 @@ variable "public_ssh_key" {
   type        = string
   default     = null
 }
+
+variable "tls" {
+  description = "Whether to enable TLS on the server for the control plane traffic."
+  type        = bool
+  default     = true
+}
+
+variable "gossip_key_secret_arn" {
+  description = "The ARN of the Secrets Manager secret containing the Consul gossip encryption key."
+  type        = string
+  default     = ""
+}
+
+variable "acls" {
+  description = "Whether to enable ACLs on the server."
+  type        = bool
+  default     = true
+}
+
+variable "suffix" {
+  type        = string
+  default     = "nosuffix"
+  description = "Suffix to add to all resource names."
+}
+
+variable "secure" {
+  description = "Whether to create all resources in a secure installation (with TLS, ACLs and gossip encryption)."
+  type        = bool
+  default     = true
+}

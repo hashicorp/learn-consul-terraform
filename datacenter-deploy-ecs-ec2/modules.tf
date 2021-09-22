@@ -54,9 +54,10 @@ module "example_client_app" {
       local_bind_port  = 1234
     }
   ]
-  retry_join                     = jsondecode(base64decode(aws_instance.consul.consul_config_file))["retry_join"][0]
+  retry_join                     = aws_instance.consul.private_ip
+  #retry_join                     = jsondecode(base64decode(aws_instance.consul.consul_config_file))["retry_join"][0]
   tls                            = true
-  consul_server_ca_cert_arn      = aws_secretsmanager_secret.consul_ca_cert.arn
+  consul_server_ca_cert_arn      = aws_secretsmanager_secret.ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
   acls                           = true
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
@@ -80,9 +81,10 @@ module "example_server_app" {
       }
     ]
   }]
-  retry_join                     = jsondecode(base64decode(aws_instance.consul.consul_config_file))["retry_join"][0]
+  retry_join                     = aws_instance.consul.private_ip
+#  retry_join                     = jsondecode(base64decode(aws_instance.consul.consul_config_file))["retry_join"][0]
   tls                            = true
-  consul_server_ca_cert_arn      = aws_secretsmanager_secret.consul_ca_cert.arn
+  consul_server_ca_cert_arn      = aws_secretsmanager_secret.ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
   acls                           = true
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
