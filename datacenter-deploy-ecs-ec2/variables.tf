@@ -15,11 +15,16 @@ variable "lb_ingress_ip" {
   type        = string
 }
 
-variable "public_ssh_key" {
+variable "ssh_keypair_name" {
   description = "Name of the SSH keypair to use in AWS."
   type        = string
   default     = null
 }
+
+#variable "ssh_keypair_path" {
+#  description = "Path to the private portion of the SSH key specified."
+#  default     = null
+#}
 
 variable "tls" {
   description = "Whether to enable TLS on the server for the control plane traffic."
@@ -49,4 +54,10 @@ variable "secure" {
   description = "Whether to create all resources in a secure installation (with TLS, ACLs and gossip encryption)."
   type        = bool
   default     = true
+}
+
+variable "consul_version" {
+  description = "Consul server version"
+  type        = string
+  default     = "1.10.2"
 }

@@ -4,11 +4,10 @@
 sudo apt-get install unzip
 
 #Download Consul
-CONSUL_VERSION="1.10.2"
-curl --silent --remote-name https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
+curl --silent --remote-name https://releases.hashicorp.com/consul/${consul_version}/consul_${consul_version}_linux_amd64.zip
 
 #Install Consul
-unzip consul_${CONSUL_VERSION}_linux_amd64.zip
+unzip consul_${consul_version}_linux_amd64.zip
 sudo chown root:root consul
 sudo mv consul /usr/local/bin/
 consul -autocomplete-install
@@ -45,6 +44,16 @@ sudo touch /etc/consul.d/server.hcl
 sudo chown --recursive consul:consul /etc/consul.d
 sudo chmod 640 /etc/consul.d/server.hcl
 
+#Create certificate file
+sudo touch /etc/consul.d/consul-agent-ca.pem
+sudo chown --recursive consul:consul /etc/consul.d
+sudo chmod 640 /etc/consul.d/consul-agent-ca.pem
+
+#Populate certificate file
+cat << EOF > /etc/consul.d/consul-agent-ca.pem
+${consul_ca_cert}
+EOF
+
 #Create Consul config file
 cat << EOF > /etc/consul.d/server.hcl
 node_name = "consul-server"
@@ -59,12 +68,12 @@ addresses {
     http = "0.0.0.0"
 }
 acl { 
-	enable = true
+	enabled = true
 	default_policy = "deny"
 	enable_token_persistence = true
 	tokens {
-		master = "${random_uuid.bootstrap_token.result}"
-		agent = "${random_uuid.bootstrap_token.result}"
+		master = "${consul_acl_token}"
+		agent = "${consul_acl_token}"
 	}
 }
 connect {
@@ -73,8 +82,8 @@ connect {
 verify_incoming = false
 verify_outgoing = false
 verify_server_hostname = false
-encrypt = "${random_id.gossip_encryption_key.result}"
-ca_file = "${tls_self_signed_cert.ca.cert_pem}"
+encrypt = "${consul_gossip_key}"
+ca_file = "consul-agent-ca.pem"
 EOF
 
 #Enable the service
