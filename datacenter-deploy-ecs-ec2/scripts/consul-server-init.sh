@@ -44,15 +44,30 @@ sudo touch /etc/consul.d/server.hcl
 sudo chown --recursive consul:consul /etc/consul.d
 sudo chmod 640 /etc/consul.d/server.hcl
 
-#Create certificate file
+#Create CA certificate files
 sudo touch /etc/consul.d/consul-agent-ca.pem
 sudo chown --recursive consul:consul /etc/consul.d
 sudo chmod 640 /etc/consul.d/consul-agent-ca.pem
+sudo touch /etc/consul.d/consul-agent-ca-key.pem
+sudo chown --recursive consul:consul /etc/consul.d
+sudo chmod 640 /etc/consul.d/consul-agent-ca-key.pem
 
-#Populate certificate file
+#Populate CA certificate files
 cat << EOF > /etc/consul.d/consul-agent-ca.pem
 ${consul_ca_cert}
 EOF
+cat << EOF > /etc/consul.d/consul-agent-ca-key.pem
+${consul_ca_key}
+EOF
+
+#Create server certificates
+sudo consul tls cert create -server -ca=/etc/consul.d/consul-agent-ca.pem -key=/etc/consul.d/consul-agent-ca-key.pem -additional-ipaddress=10.0.4.100
+sudo cp dc1-server-consul-0.pem /etc/consul.d/server-consul-0.pem
+sudo cp dc1-server-consul-0-key.pem /etc/consul.d/server-consul-0-key.pem
+sudo chmod 640 /etc/consul.d/server-consul-0.pem
+sudo chmod 640 /etc/consul.d/server-consul-0-key.pem
+sudo chown --recursive consul:consul /etc/consul.d
+
 
 #Create Consul config file
 cat << EOF > /etc/consul.d/server.hcl
@@ -64,9 +79,7 @@ bootstrap = true
 ui_config {
     enabled = true
 }
-addresses {
-    http = "0.0.0.0"
-}
+client_addr = "0.0.0.0"
 acl { 
 	enabled = true
 	default_policy = "deny"
@@ -83,7 +96,16 @@ verify_incoming = false
 verify_outgoing = false
 verify_server_hostname = false
 encrypt = "${consul_gossip_key}"
-ca_file = "consul-agent-ca.pem"
+ca_file = "/etc/consul.d/consul-agent-ca.pem"
+cert_file = "/etc/consul.d/server-consul-0.pem"
+key_file = "/etc/consul.d/server-consul-0-key.pem"
+auto_encrypt {
+  allow_tls = true
+}
+ports {
+  http = 8500
+  https = 8501
+}
 EOF
 
 #Enable the service

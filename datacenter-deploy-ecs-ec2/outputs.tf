@@ -9,7 +9,3 @@ output "Consul_ui_address" {
 output "acl_bootstrap_token" {
   value = random_uuid.bootstrap_token.result
 }
-
-#output "user_data" {
-#  value = "\n${data.template_file.userdata.rendered}"
-#}

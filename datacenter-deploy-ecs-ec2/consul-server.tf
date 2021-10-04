@@ -5,7 +5,6 @@ resource "aws_instance" "consul" {
   subnet_id              = module.vpc.public_subnets[0]
   vpc_security_group_ids = [aws_security_group.consul.id]
   user_data              = data.template_file.userdata.rendered
-  #user_data              = file("./scripts/consul-server.sh")
   iam_instance_profile   = aws_iam_instance_profile.consul.name
   key_name               = var.ssh_keypair_name
   tags = {

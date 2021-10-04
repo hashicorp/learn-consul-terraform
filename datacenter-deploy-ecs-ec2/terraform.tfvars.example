@@ -1,4 +1,4 @@
 lb_ingress_ip = "YOUR_PUBLIC_IP"
 region = "us-east-1"
 name = "learn-hcp"
-ssh_keypair_name = "YOUR_AWS_KEYPAIR_NAME"
+consul_version = "1.10.3"

@@ -10,7 +10,8 @@ module "acl_controller" {
     }
   }
   consul_bootstrap_token_secret_arn = aws_secretsmanager_secret.bootstrap_token.arn
-  consul_server_http_addr           = aws_instance.consul.private_ip
+  consul_server_ca_cert_arn         = aws_secretsmanager_secret.ca_cert.arn
+  consul_server_http_addr           = "https://${aws_instance.consul.private_ip}:8501"
   ecs_cluster_arn                   = aws_ecs_cluster.this.arn
   region                            = var.region
   subnets                           = module.vpc.private_subnets
@@ -55,7 +56,6 @@ module "example_client_app" {
     }
   ]
   retry_join                     = aws_instance.consul.private_ip
-  #retry_join                     = jsondecode(base64decode(aws_instance.consul.consul_config_file))["retry_join"][0]
   tls                            = true
   consul_server_ca_cert_arn      = aws_secretsmanager_secret.ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
