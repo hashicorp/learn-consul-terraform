@@ -15,38 +15,32 @@ variable "lb_ingress_ip" {
   type        = string
 }
 
-
-variable "hcp_client_id" {
-  description = "HCP Client ID."
-  type        = string
-}
-
-variable "hcp_client_secret" {
-  description = "HCP Client Secret."
-  type        = string
-}
-
 variable "vpc_id" {
   type = string
-  description = "The VPC ID"
+  description = "Your AWS VPC ID."
 }
 
-variable "consul-acl-token" {
+variable "consul_acl_token" {
   type = string
-  description = "The Consul ACL token to use"
+  description = "Your Consul ACL token with __ permissions."
 }
 
-variable "consul-gossip-key" {
+variable "consul_gossip_key" {
   type = string
-  description = "The Consul gossip key"
+  description = "Your Consul gossip encryption key."
 }
 
-variable "consul-client-ca" {
+variable "consul_client_ca" {
   type = string
-  description = "The Consul CA value"
+  description = "Your Consul CA certificate."
 }
 
-variable "public-subnets-ids" {
+variable "private_subnets_ids" {
+  type = list(string)
+  description = "A list of private subnets and their respective id"
+}
+
+variable "public_subnets_ids" {
   type = list(string)
   description = "A list of public subnets and their respective id"
 }

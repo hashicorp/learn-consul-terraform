@@ -1,7 +1,9 @@
 lb_ingress_ip = "YOUR_PUBLIC_IP"
-hcp_client_id = "YOUR_HCP_CLIENT_ID"
-hcp_client_secret = "YOUR_HCP_CLIENT_SECRET"
+vpc_id = "YOUR_AWS_VPC_ID"
+consul_acl_token = "YOUR_CONSUL_ACL_TOKEN"
+consul_gossip_key = "YOUR_CONSUL_GOSSIP_KEY"
+consul_client_ca = 
+private_subnets_ids =
+public_subnets_ids =
 aws_region     = "us-east-1"
-aws_access_key = "YOUR_AWS_ACCESS_KEY"
-aws_secret_key = "YOUR_AWS_SECRET_KEY"
 name = "learn-hcp"

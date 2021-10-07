@@ -7,6 +7,7 @@ resource "aws_ecs_service" "example_client_app" {
   task_definition = module.example_client_app.task_definition_arn
   desired_count   = 1
   network_configuration {
+    #Create a variable for them to input their private IP address?
     subnets = module.vpc.private_subnets
   }
   launch_type    = "FARGATE"
@@ -27,6 +28,7 @@ resource "aws_ecs_service" "example_server_app" {
   task_definition = module.example_server_app.task_definition_arn
   desired_count   = 1
   network_configuration {
+    #Create a variable for them to input their private IP address?
     subnets = module.vpc.private_subnets
   }
   launch_type            = "FARGATE"
