@@ -3,14 +3,14 @@ resource "aws_lb" "example_client_app" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.example_client_app_alb.id]
-  subnets            = module.vpc.public_subnets
+  subnets            = var.public-subnets-ids
 }
 
 resource "aws_lb_target_group" "example_client_app" {
   name                 = "${var.name}-example-client-app"
   port                 = 9090
   protocol             = "HTTP"
-  vpc_id               = module.vpc.vpc_id
+  vpc_id               = var.vpc_id
   target_type          = "ip"
   deregistration_delay = 10
   health_check {

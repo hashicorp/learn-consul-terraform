@@ -10,18 +10,6 @@ variable "region" {
   default     = "us-east-1"
 }
 
-variable "aws_access_key" {
-  description = "AWS access key."
-  type        = string
-  default     = null
-}
-
-variable "aws_secret_key" {
-  description = "AWS secret key."
-  type        = string
-  default     = null
-}
-
 variable "lb_ingress_ip" {
   description = "Your Public IP. This is used in the load balancer security groups to ensure only you can access the Consul UI and example application."
   type        = string
@@ -36,4 +24,29 @@ variable "hcp_client_id" {
 variable "hcp_client_secret" {
   description = "HCP Client Secret."
   type        = string
+}
+
+variable "vpc_id" {
+  type = string
+  description = "The VPC ID"
+}
+
+variable "consul-acl-token" {
+  type = string
+  description = "The Consul ACL token to use"
+}
+
+variable "consul-gossip-key" {
+  type = string
+  description = "The Consul gossip key"
+}
+
+variable "consul-client-ca" {
+  type = string
+  description = "The Consul CA value"
+}
+
+variable "public-subnets-ids" {
+  type = list(string)
+  description = "A list of public subnets and their respective id"
 }

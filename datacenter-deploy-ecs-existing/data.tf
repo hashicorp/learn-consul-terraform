@@ -11,5 +11,9 @@ data "aws_caller_identity" "current" {}
 
 data "aws_security_group" "vpc_default" {
   name   = "default"
-  vpc_id = module.vpc.vpc_id
+  vpc_id = var.vpc_id
+}
+
+data "aws_vpc" "selected" {
+  id = var.vpc_id
 }
