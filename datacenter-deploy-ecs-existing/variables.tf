@@ -30,17 +30,22 @@ variable "consul_gossip_key" {
   description = "Your Consul gossip encryption key."
 }
 
-variable "consul_client_ca" {
+variable "consul_client_ca_path" {
   type = string
-  description = "Your Consul CA certificate."
+  description = "The path to your Consul CA certificate."
 }
 
 variable "private_subnets_ids" {
   type = list(string)
-  description = "A list of private subnets and their respective id"
+  description = "A list of private subnets and their respective ids."
 }
 
 variable "public_subnets_ids" {
   type = list(string)
-  description = "A list of public subnets and their respective id"
+  description = "A list of public subnets and their respective ids."
+}
+
+variable "consul_cluster_ip" {
+  type = string
+  description = "The IP address of your Consul cluster."
 }
