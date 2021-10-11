@@ -10,7 +10,7 @@ variable "region" {
   default     = "us-east-1"
 }
 
-variable "lb_ingress_ip" {
+variable "user_public_ip" {
   description = "Your Public IP. This is used in the load balancer security groups to ensure only you can access the Consul UI and example application."
   type        = string
 }

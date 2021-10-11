@@ -7,7 +7,7 @@ resource "aws_ecs_service" "example_client_app" {
   task_definition = module.example_client_app.task_definition_arn
   desired_count   = 1
   network_configuration {
-    subnets = var.public_subnets_ids
+    subnets = var.private_subnets_ids
   }
   launch_type    = "FARGATE"
   propagate_tags = "TASK_DEFINITION"
@@ -27,7 +27,7 @@ resource "aws_ecs_service" "example_server_app" {
   task_definition = module.example_server_app.task_definition_arn
   desired_count   = 1
   network_configuration {
-    subnets = var.public_subnets_ids
+    subnets = var.private_subnets_ids
   }
   launch_type            = "FARGATE"
   propagate_tags         = "TASK_DEFINITION"

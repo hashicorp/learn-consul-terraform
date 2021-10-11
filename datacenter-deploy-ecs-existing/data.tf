@@ -17,7 +17,3 @@ data "aws_security_group" "vpc_default" {
 data "aws_vpc" "selected" {
   id = var.vpc_id
 }
-
-#data "tls_public_key" "example" {
-#  private_key_pem = "${file("./certs/public_key")}"
-#}
