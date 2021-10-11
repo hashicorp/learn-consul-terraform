@@ -9,8 +9,8 @@ module "acl_controller" {
     }
   }
   consul_bootstrap_token_secret_arn = aws_secretsmanager_secret.bootstrap_token.arn
-  consul_server_ca_cert_arn         = aws_secretsmanager_secret.ca_cert.arn
-  consul_server_http_addr           = var.consul_cluster_ip
+  consul_server_ca_cert_arn         = aws_secretsmanager_secret.consul_ca_cert.arn
+  consul_server_http_addr           = "https://${var.consul_cluster_ip}:8501"
   ecs_cluster_arn                   = aws_ecs_cluster.this.arn
   region                            = var.region
   subnets                           = var.private_subnets_ids
