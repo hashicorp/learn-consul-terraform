@@ -5,6 +5,7 @@ echo "$CONSUL_CACERT" > /tmp/consul-ca-cert.pem
 %{ endif }
 
 exec consul agent \
+  -datacenter "$CONSUL_DATACENTER" \
   -advertise "$ECS_IPV4" \
   -data-dir /consul/data \
   -client 0.0.0.0 \
