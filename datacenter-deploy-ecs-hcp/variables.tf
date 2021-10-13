@@ -37,3 +37,9 @@ variable "hcp_client_secret" {
   description = "HCP Client Secret."
   type        = string
 }
+
+variable "hcp_datacenter_name" {
+  type = string
+  description = "The name of datacenter the Consul cluster belongs to"
+  default = "dc1"
+}
