@@ -1,5 +1,6 @@
 module "acl_controller" {
-  source     = "../modules/acl-controller"
+  source  = "hashicorp/consul-ecs/aws//modules/acl-controller"
+  version = "0.2.0-beta2"
   depends_on = [hcp_consul_cluster.example]
   log_configuration = {
     logDriver = "awslogs"
@@ -18,7 +19,8 @@ module "acl_controller" {
 }
 
 module "example_client_app" {
-  source            = "../modules/mesh-task"
+  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
+  version = "0.2.0-beta2"
   family            = "${var.name}-example-client-app"
   port              = "9090"
   log_configuration = local.example_client_app_log_config
@@ -61,11 +63,11 @@ module "example_client_app" {
   acls                           = true
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
-  consul_datacenter              = hcp_consul_cluster.example.datacenter
 }
 
 module "example_server_app" {
-  source            = "../modules/mesh-task"
+  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
+  version = "0.2.0-beta2"
   family            = "${var.name}-example-server-app"
   port              = "9090"
   log_configuration = local.example_server_app_log_config
@@ -88,5 +90,4 @@ module "example_server_app" {
   acls                           = true
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
-  consul_datacenter              = hcp_consul_cluster.example.datacenter
 }

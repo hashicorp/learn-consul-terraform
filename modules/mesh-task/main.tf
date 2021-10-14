@@ -214,12 +214,7 @@ resource "aws_ecs_task_definition" "this" {
             ]
             cpu          = 0
             volumesFrom  = []
-            environment  = [
-              {
-                name = "CONSUL_DATACENTER"
-                value = var.consul_datacenter
-              }
-            ]
+            environment  = []
             portMappings = []
             secrets = var.acls ? [
               {
@@ -266,7 +261,12 @@ resource "aws_ecs_task_definition" "this" {
             }
             cpu         = 0
             volumesFrom = []
-            environment = []
+            environment = [
+              {
+                name = "CONSUL_DATACENTER"
+                value = var.consul_datacenter
+              }
+            ]
             secrets = concat(
               var.tls ? [
                 {
