@@ -249,6 +249,7 @@ resource "aws_ecs_task_definition" "this" {
                   retry_join                = var.retry_join
                   tls                       = var.tls
                   acls                      = var.acls
+
                 }
               ), "\r", "")
             ]
@@ -260,7 +261,12 @@ resource "aws_ecs_task_definition" "this" {
             }
             cpu         = 0
             volumesFrom = []
-            environment = []
+            environment = [
+              {
+                name = "CONSUL_DATACENTER"
+                value = var.consul_datacenter
+              }
+            ]
             secrets = concat(
               var.tls ? [
                 {

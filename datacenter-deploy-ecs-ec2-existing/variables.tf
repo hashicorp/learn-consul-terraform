@@ -49,3 +49,9 @@ variable "consul_cluster_ip" {
   type = string
   description = "The IP address of your Consul cluster."
 }
+
+variable "consul_datacenter" {
+  type = string
+  description = "The name of your Consul datacenter."
+  default = "dc1"
+}
