@@ -5,7 +5,7 @@ resource "aws_secretsmanager_secret" "bootstrap_token" {
 
 resource "aws_secretsmanager_secret_version" "bootstrap_token" {
   secret_id     = aws_secretsmanager_secret.bootstrap_token.id
-  secret_string = hcp_consul_cluster.example.consul_root_token_secret_id
+  secret_string = var.consul_acl_token
 }
 
 resource "aws_secretsmanager_secret" "gossip_key" {
@@ -15,7 +15,7 @@ resource "aws_secretsmanager_secret" "gossip_key" {
 
 resource "aws_secretsmanager_secret_version" "gossip_key" {
   secret_id     = aws_secretsmanager_secret.gossip_key.id
-  secret_string = jsondecode(base64decode(hcp_consul_cluster.example.consul_config_file))["encrypt"]
+  secret_string = var.consul_gossip_key
 }
 
 resource "aws_secretsmanager_secret" "consul_ca_cert" {
@@ -25,5 +25,5 @@ resource "aws_secretsmanager_secret" "consul_ca_cert" {
 
 resource "aws_secretsmanager_secret_version" "consul_ca_cert" {
   secret_id     = aws_secretsmanager_secret.consul_ca_cert.id
-  secret_string = base64decode(hcp_consul_cluster.example.consul_ca_file)
+  secret_string = file(var.consul_client_ca_path)
 }

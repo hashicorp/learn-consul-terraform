@@ -10,36 +10,48 @@ variable "region" {
   default     = "us-east-1"
 }
 
-variable "aws_access_key" {
-  description = "AWS access key."
+variable "consul_cluster_addr" {
   type        = string
-  default     = null
+  description = "The network address of your Consul cluster. "
 }
 
-variable "aws_secret_key" {
-  description = "AWS secret key."
+variable "consul_datacenter" {
   type        = string
-  default     = null
+  description = "The name of your Consul datacenter."
+  default     = "dc1"
 }
 
-variable "lb_ingress_ip" {
+variable "consul_acl_token" {
+  type        = string
+  description = "Your Consul ACL token with __ permissions."
+}
+
+variable "consul_gossip_key" {
+  type        = string
+  description = "Your Consul gossip encryption key."
+}
+
+variable "consul_client_ca_path" {
+  type        = string
+  description = "The path to your Consul CA certificate."
+}
+
+variable "private_subnets_ids" {
+  type        = list(string)
+  description = "A list of private subnets and their respective ids."
+}
+
+variable "public_subnets_ids" {
+  type        = list(string)
+  description = "A list of public subnets and their respective ids."
+}
+
+variable "vpc_id" {
+  type        = string
+  description = "Your AWS VPC ID."
+}
+
+variable "user_public_ip" {
   description = "Your Public IP. This is used in the load balancer security groups to ensure only you can access the Consul UI and example application."
   type        = string
-}
-
-
-variable "hcp_client_id" {
-  description = "HCP Client ID."
-  type        = string
-}
-
-variable "hcp_client_secret" {
-  description = "HCP Client Secret."
-  type        = string
-}
-
-variable "hcp_datacenter_name" {
-  type = string
-  description = "The name of datacenter the Consul cluster belongs to"
-  default = "dc1"
 }
