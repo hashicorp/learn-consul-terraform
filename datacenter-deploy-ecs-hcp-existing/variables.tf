@@ -10,9 +10,9 @@ variable "region" {
   default     = "us-east-1"
 }
 
-variable "consul_cluster_ip" {
+variable "consul_cluster_addr" {
   type        = string
-  description = "The IP address of your Consul cluster."
+  description = "The network address of your Consul cluster. "
 }
 
 variable "consul_datacenter" {
@@ -37,17 +37,17 @@ variable "consul_client_ca_path" {
 }
 
 variable "private_subnets_ids" {
-  type = list(string)
+  type        = list(string)
   description = "A list of private subnets and their respective ids."
 }
 
 variable "public_subnets_ids" {
-  type = list(string)
+  type        = list(string)
   description = "A list of public subnets and their respective ids."
 }
 
 variable "vpc_id" {
-  type = string
+  type        = string
   description = "Your AWS VPC ID."
 }
 

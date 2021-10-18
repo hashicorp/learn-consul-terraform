@@ -9,9 +9,7 @@ module "acl_controller" {
     }
   }
   consul_bootstrap_token_secret_arn = aws_secretsmanager_secret.bootstrap_token.arn
-  consul_server_ca_cert_arn         = aws_secretsmanager_secret.consul_ca_cert.arn
-  // consul_server_http_addr           = "https://${var.consul_cluster_ip}:8501"
-  consul_server_http_addr           = "https://dc1.private.consul.98a0dcc3-5473-4e4d-a28e-6c343c498530.aws.hashicorp.cloud"
+  consul_server_http_addr           = var.consul_cluster_addr
   ecs_cluster_arn                   = aws_ecs_cluster.this.arn
   region                            = var.region
   subnets                           = var.private_subnets_ids
@@ -55,15 +53,14 @@ module "example_client_app" {
       local_bind_port  = 1234
     }
   ]
-  // retry_join                     = var.consul_cluster_ip
-  retry_join                     = "https://dc1.private.consul.98a0dcc3-5473-4e4d-a28e-6c343c498530.aws.hashicorp.cloud"
+  // Strip away the https prefix from the Consul network address
+  retry_join                     = substr(var.consul_cluster_addr, 8, -1)
   tls                            = true
   consul_server_ca_cert_arn      = aws_secretsmanager_secret.consul_ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
   acls                           = true
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
-  consul_datacenter              = var.consul_datacenter
 }
 
 module "example_server_app" {
@@ -83,13 +80,12 @@ module "example_server_app" {
       }
     ]
   }]
-  // retry_join                     = var.consul_cluster_ip
-  retry_join                     = "https://dc1.private.consul.98a0dcc3-5473-4e4d-a28e-6c343c498530.aws.hashicorp.cloud"
+  // Strip away the https prefix from the Consul network address
+  retry_join                     = substr(var.consul_cluster_addr, 8, -1)
   tls                            = true
   consul_server_ca_cert_arn      = aws_secretsmanager_secret.consul_ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
   acls                           = true
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
-  consul_datacenter              = var.consul_datacenter
 }
