@@ -1,13 +1,13 @@
 resource "aws_security_group" "example_client_app_alb" {
   name   = "${var.name}-example-client-app-alb"
-  vpc_id = module.vpc.vpc_id
+  vpc_id = var.vpc_id
 
   ingress {
     description = "Access to example client application."
     from_port   = 9090
     to_port     = 9090
     protocol    = "tcp"
-    cidr_blocks = ["${var.lb_ingress_ip}/32"]
+    cidr_blocks = ["${var.user_public_ip}/32"]
   }
 
   egress {
