@@ -56,8 +56,6 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_hcp_client_id"></a> [hcp\_client\_id](#input\_hcp\_client\_id) | HCP Client ID. | `string` | n/a | yes |
-| <a name="input_hcp_client_secret"></a> [hcp\_client\_secret](#input\_hcp\_client\_secret) | HCP Client Secret. | `string` | n/a | yes |
 | <a name="input_lb_ingress_ip"></a> [lb\_ingress\_ip](#input\_lb\_ingress\_ip) | Your Public IP. This is used in the load balancer security groups to ensure only you can access the Consul UI and example application. | `string` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | Name to be used on all the resources as identifier. | `string` | `"consul-ecs"` | no |
 | <a name="input_region"></a> [region](#input\_region) | AWS region. | `string` | `"us-east-1"` | no |
