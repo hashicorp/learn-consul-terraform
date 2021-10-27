@@ -1,7 +1,3 @@
 lb_ingress_ip = "YOUR_PUBLIC_IP"
-hcp_client_id = "YOUR_HCP_CLIENT_ID"
-hcp_client_secret = "YOUR_HCP_CLIENT_SECRET"
 aws_region     = "us-east-1"
-aws_access_key = "YOUR_AWS_ACCESS_KEY"
-aws_secret_key = "YOUR_AWS_SECRET_KEY"
 name = "learn-hcp"
