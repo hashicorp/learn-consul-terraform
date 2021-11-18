@@ -1,5 +1,6 @@
 module "acl_controller" {
-  source     = "../modules/acl-controller"
+  source     = "hashicorp/consul-ecs/aws//modules/acl-controller"
+  version    = "0.2.0"
   depends_on = [aws_instance.consul]
   log_configuration = {
     logDriver = "awslogs"
@@ -18,8 +19,10 @@ module "acl_controller" {
   name_prefix                       = var.name
 }
 
+
 module "example_client_app" {
-  source            = "../modules/mesh-task"
+  source            = "hashicorp/consul-ecs/aws//modules/mesh-task"
+  version           = "0.2.0"
   family            = "${var.name}-example-client-app"
   port              = "9090"
   log_configuration = local.example_client_app_log_config
@@ -55,17 +58,19 @@ module "example_client_app" {
       local_bind_port  = 1234
     }
   ]
-  retry_join                     = aws_instance.consul.private_ip
+  retry_join                     = [aws_instance.consul.private_ip]
   tls                            = true
   consul_server_ca_cert_arn      = aws_secretsmanager_secret.ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
   acls                           = true
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
+  consul_datacenter              = var.consul_datacenter
 }
 
 module "example_server_app" {
-  source            = "../modules/mesh-task"
+  source            = "hashicorp/consul-ecs/aws//modules/mesh-task"
+  version           = "0.2.0"
   family            = "${var.name}-example-server-app"
   port              = "9090"
   log_configuration = local.example_server_app_log_config
@@ -81,12 +86,12 @@ module "example_server_app" {
       }
     ]
   }]
-  retry_join                     = aws_instance.consul.private_ip
-#  retry_join                     = jsondecode(base64decode(aws_instance.consul.consul_config_file))["retry_join"][0]
+  retry_join                     = [aws_instance.consul.private_ip]
   tls                            = true
   consul_server_ca_cert_arn      = aws_secretsmanager_secret.ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
   acls                           = true
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
+  consul_datacenter              = var.consul_datacenter
 }

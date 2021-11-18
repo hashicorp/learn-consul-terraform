@@ -55,3 +55,13 @@ variable "user_public_ip" {
   description = "Your Public IP. This is used in the load balancer security groups to ensure only you can access the Consul UI and example application."
   type        = string
 }
+
+variable "default_tags" {
+  description = "Default Tags for AWS"
+  type        = map(string)
+  default = {
+    Environment = "dev"
+    Team        = "Education-Consul"
+    tutorial    = "Serverless Consul service mesh with ECS and HCP"
+  }
+}

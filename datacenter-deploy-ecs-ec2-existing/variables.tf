@@ -16,42 +16,52 @@ variable "user_public_ip" {
 }
 
 variable "vpc_id" {
-  type = string
+  type        = string
   description = "Your AWS VPC ID."
 }
 
 variable "consul_acl_token" {
-  type = string
+  type        = string
   description = "Your Consul ACL token with __ permissions."
 }
 
 variable "consul_gossip_key" {
-  type = string
+  type        = string
   description = "Your Consul gossip encryption key."
 }
 
 variable "consul_client_ca_path" {
-  type = string
+  type        = string
   description = "The path to your Consul CA certificate."
 }
 
 variable "private_subnets_ids" {
-  type = list(string)
+  type        = list(string)
   description = "A list of private subnets and their respective ids."
 }
 
 variable "public_subnets_ids" {
-  type = list(string)
+  type        = list(string)
   description = "A list of public subnets and their respective ids."
 }
 
-variable "consul_cluster_ip" {
-  type = string
-  description = "The IP address of your Consul cluster."
+variable "consul_cluster_ips" {
+  type        = list(string)
+  description = "The IP addresses of your Consul cluster."
 }
 
 variable "consul_datacenter" {
-  type = string
+  type        = string
   description = "The name of your Consul datacenter."
-  default = "dc1"
+  default     = "dc1"
+}
+
+variable "default_tags" {
+  description = "Default Tags for AWS"
+  type        = map(string)
+  default = {
+    Environment = "dev"
+    Team        = "Education-Consul"
+    tutorial    = "Service mesh with ECS and Consul on EC2"
+  }
 }

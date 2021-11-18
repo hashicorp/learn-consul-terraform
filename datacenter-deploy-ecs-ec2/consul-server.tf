@@ -15,7 +15,7 @@ resource "aws_instance" "consul" {
 
 resource "aws_eip" "consul" {
   instance = aws_instance.consul.id
-  vpc = true
+  vpc      = true
 }
 
 resource "aws_eip_association" "eip_assoc" {

@@ -59,5 +59,21 @@ variable "secure" {
 variable "consul_version" {
   description = "Consul server version"
   type        = string
-  default     = "1.10.2"
+  default     = "1.10.4"
+}
+
+variable "consul_datacenter" {
+  type        = string
+  description = "The name of your Consul datacenter."
+  default     = "dc1"
+}
+
+variable "default_tags" {
+  description = "Default Tags for AWS"
+  type        = map(string)
+  default = {
+    Environment       = "dev"
+    Team              = "Education-Consul"
+    tutorial          = "Service mesh with ECS and Consul on EC2"
+  }
 }
