@@ -12,7 +12,7 @@ module "acl_controller" {
   }
   consul_bootstrap_token_secret_arn = aws_secretsmanager_secret.bootstrap_token.arn
   consul_server_ca_cert_arn         = aws_secretsmanager_secret.consul_ca_cert.arn
-  consul_server_http_addr           = var.consul_cluster_ips[0]
+  consul_server_http_addr           = "http://${var.consul_cluster_addrs[0]}:8500" # Change this to https and port 8501 if you are using HTTPS
   ecs_cluster_arn                   = aws_ecs_cluster.this.arn
   region                            = var.region
   subnets                           = var.private_subnets_ids
@@ -58,7 +58,7 @@ module "example_client_app" {
       local_bind_port  = 1234
     }
   ]
-  retry_join                     = var.consul_cluster_ips
+  retry_join                     = var.consul_cluster_addrs
   tls                            = true
   consul_server_ca_cert_arn      = aws_secretsmanager_secret.consul_ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
@@ -89,7 +89,7 @@ module "example_server_app" {
       }
     ]
   }]
-  retry_join                     = var.consul_cluster_ips
+  retry_join                     = var.consul_cluster_addrs
   tls                            = true
   consul_server_ca_cert_arn      = aws_secretsmanager_secret.consul_ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn

@@ -45,9 +45,9 @@ variable "public_subnets_ids" {
   description = "A list of public subnets and their respective ids."
 }
 
-variable "consul_cluster_ips" {
+variable "consul_cluster_addrs" {
   type        = list(string)
-  description = "The IP addresses of your Consul cluster."
+  description = "The IP addresses of your Consul cluster. This must be a full URL https://consul.example.com:8501."
 }
 
 variable "consul_datacenter" {

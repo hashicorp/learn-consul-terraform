@@ -66,6 +66,8 @@ module "example_client_app" {
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
   consul_datacenter              = var.consul_datacenter
+
+  depends_on = [module.acl_controller, module.example_server_app]
 }
 
 module "example_server_app" {
@@ -94,4 +96,6 @@ module "example_server_app" {
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
   consul_datacenter              = var.consul_datacenter
+
+  depends_on = [module.acl_controller]
 }
