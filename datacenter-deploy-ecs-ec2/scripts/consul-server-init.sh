@@ -73,7 +73,7 @@ sudo chown --recursive consul:consul /etc/consul.d
 cat << EOF > /etc/consul.d/server.hcl
 node_name = "consul-server"
 server = true
-datacenter = "dc1"
+datacenter = "${consul_datacenter}"
 data_dir = "/opt/consul"
 bootstrap = true
 ui_config {

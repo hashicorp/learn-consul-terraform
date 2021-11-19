@@ -1,5 +1,7 @@
 module "acl_controller" {
-  source     = "../modules/acl-controller"
+  source  = "hashicorp/consul-ecs/aws//modules/acl-controller"
+  version = "0.2.0"
+
   log_configuration = {
     logDriver = "awslogs"
     options = {
@@ -10,7 +12,7 @@ module "acl_controller" {
   }
   consul_bootstrap_token_secret_arn = aws_secretsmanager_secret.bootstrap_token.arn
   consul_server_ca_cert_arn         = aws_secretsmanager_secret.consul_ca_cert.arn
-  consul_server_http_addr           = "https://${var.consul_cluster_ip}:8501"
+  consul_server_http_addr           = "http://${var.consul_cluster_addrs[0]}:8500" # Change this to https and port 8501 if you are using HTTPS
   ecs_cluster_arn                   = aws_ecs_cluster.this.arn
   region                            = var.region
   subnets                           = var.private_subnets_ids
@@ -18,7 +20,9 @@ module "acl_controller" {
 }
 
 module "example_client_app" {
-  source            = "../modules/mesh-task"
+  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
+  version = "0.2.0"
+
   family            = "${var.name}-example-client-app"
   port              = "9090"
   log_configuration = local.example_client_app_log_config
@@ -54,7 +58,7 @@ module "example_client_app" {
       local_bind_port  = 1234
     }
   ]
-  retry_join                     = var.consul_cluster_ip
+  retry_join                     = var.consul_cluster_addrs
   tls                            = true
   consul_server_ca_cert_arn      = aws_secretsmanager_secret.consul_ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
@@ -62,10 +66,14 @@ module "example_client_app" {
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
   consul_datacenter              = var.consul_datacenter
+
+  depends_on = [module.acl_controller, module.example_server_app]
 }
 
 module "example_server_app" {
-  source            = "../modules/mesh-task"
+  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
+  version = "0.2.0"
+
   family            = "${var.name}-example-server-app"
   port              = "9090"
   log_configuration = local.example_server_app_log_config
@@ -81,7 +89,7 @@ module "example_server_app" {
       }
     ]
   }]
-  retry_join                     = var.consul_cluster_ip
+  retry_join                     = var.consul_cluster_addrs
   tls                            = true
   consul_server_ca_cert_arn      = aws_secretsmanager_secret.consul_ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
@@ -89,4 +97,6 @@ module "example_server_app" {
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
   consul_datacenter              = var.consul_datacenter
+
+  depends_on = [module.acl_controller]
 }

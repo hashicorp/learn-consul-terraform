@@ -8,15 +8,15 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.63.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.65.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_acl_controller"></a> [acl\_controller](#module\_acl\_controller) | ../modules/acl-controller | n/a |
-| <a name="module_example_client_app"></a> [example\_client\_app](#module\_example\_client\_app) | ../modules/mesh-task | n/a |
-| <a name="module_example_server_app"></a> [example\_server\_app](#module\_example\_server\_app) | ../modules/mesh-task | n/a |
+| <a name="module_acl_controller"></a> [acl\_controller](#module\_acl\_controller) | hashicorp/consul-ecs/aws//modules/acl-controller | 0.2.0 |
+| <a name="module_example_client_app"></a> [example\_client\_app](#module\_example\_client\_app) | hashicorp/consul-ecs/aws//modules/mesh-task | 0.2.0 |
+| <a name="module_example_server_app"></a> [example\_server\_app](#module\_example\_server\_app) | hashicorp/consul-ecs/aws//modules/mesh-task | 0.2.0 |
 
 ## Resources
 
@@ -51,6 +51,7 @@
 | <a name="input_consul_cluster_addr"></a> [consul\_cluster\_addr](#input\_consul\_cluster\_addr) | The network address of your Consul cluster. | `string` | n/a | yes |
 | <a name="input_consul_datacenter"></a> [consul\_datacenter](#input\_consul\_datacenter) | The name of your Consul datacenter. | `string` | `"dc1"` | no |
 | <a name="input_consul_gossip_key"></a> [consul\_gossip\_key](#input\_consul\_gossip\_key) | Your Consul gossip encryption key. | `string` | n/a | yes |
+| <a name="input_default_tags"></a> [default\_tags](#input\_default\_tags) | Default Tags for AWS | `map(string)` | <pre>{<br>  "Environment": "dev",<br>  "Team": "Education-Consul",<br>  "tutorial": "Serverless Consul service mesh with ECS and HCP"<br>}</pre> | no |
 | <a name="input_name"></a> [name](#input\_name) | Name to be used on all the resources as identifier. | `string` | `"consul-ecs"` | no |
 | <a name="input_private_subnets_ids"></a> [private\_subnets\_ids](#input\_private\_subnets\_ids) | A list of private subnets and their respective ids. | `list(string)` | n/a | yes |
 | <a name="input_public_subnets_ids"></a> [public\_subnets\_ids](#input\_public\_subnets\_ids) | A list of public subnets and their respective ids. | `list(string)` | n/a | yes |

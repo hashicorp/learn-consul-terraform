@@ -16,15 +16,10 @@ variable "lb_ingress_ip" {
 }
 
 variable "ssh_keypair_name" {
-  description = "Name of the SSH keypair to use in AWS."
+  description = "Name of the SSH keypair to use in AWS. Must be available locally in the context of the terraform run."
   type        = string
   default     = null
 }
-
-#variable "ssh_keypair_path" {
-#  description = "Path to the private portion of the SSH key specified."
-#  default     = null
-#}
 
 variable "tls" {
   description = "Whether to enable TLS on the server for the control plane traffic."
@@ -59,5 +54,21 @@ variable "secure" {
 variable "consul_version" {
   description = "Consul server version"
   type        = string
-  default     = "1.10.2"
+  default     = "1.10.4"
+}
+
+variable "consul_datacenter" {
+  type        = string
+  description = "The name of your Consul datacenter."
+  default     = "dc1"
+}
+
+variable "default_tags" {
+  description = "Default Tags for AWS"
+  type        = map(string)
+  default = {
+    Environment = "dev"
+    Team        = "Education-Consul"
+    tutorial    = "Service mesh with ECS and Consul on EC2"
+  }
 }

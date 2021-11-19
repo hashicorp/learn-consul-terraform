@@ -20,3 +20,13 @@ variable "hcp_datacenter_name" {
   description = "The name of datacenter the Consul cluster belongs to"
   default = "dc1"
 }
+
+variable "default_tags" {
+  description = "Default Tags for AWS"
+  type        = map(string)
+  default = {
+    Environment = "dev"
+    Team        = "Education-Consul"
+    tutorial    = "Serverless Consul service mesh with ECS and HCP"
+  }
+}
