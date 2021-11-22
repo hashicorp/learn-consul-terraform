@@ -16,9 +16,9 @@ variable "lb_ingress_ip" {
 }
 
 variable "hcp_datacenter_name" {
-  type = string
+  type        = string
   description = "The name of datacenter the Consul cluster belongs to"
-  default = "dc1"
+  default     = "dc1"
 }
 
 variable "default_tags" {
