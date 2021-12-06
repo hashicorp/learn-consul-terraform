@@ -9,10 +9,9 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.66.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.1.0 |
-| <a name="provider_template"></a> [template](#provider\_template) | 2.2.0 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | 3.1.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >3.0.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
 
 ## Modules
 
@@ -62,7 +61,6 @@
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_caller_identity.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_security_group.vpc_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/security_group) | data source |
-| [template_file.userdata](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
 
 ## Inputs
 
