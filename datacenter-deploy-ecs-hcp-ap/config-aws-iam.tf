@@ -63,35 +63,3 @@ resource "aws_iam_role_policy_attachment" "hashicups" {
   policy_arn = aws_iam_policy.hashicups.arn
   role       = each.value.name
 }
-
-#resource "aws_iam_role_policy_attachment" "ssm_attach" {
-#  for_each   = aws_iam_role.hashicups
-#  policy_arn = aws_iam_policy.container_attach.arn
-#  role       = each.value.name
-#}
-
-
-#resource "aws_iam_policy" "container_attach" {
-#  policy = jsonencode({
-#    Version = "2012-10-17"
-#    Statement = [
-#      {
-#        Effect   = var.iam_effect.allow
-#        Resource = "*"
-#        Action = [
-#          "ssmmessages:CreateControlChannel",
-#          "ssmmessages:CreateDataChannel",
-#          "ssmmessages:OpenControlChannel",
-#          "ssmmessages:OpenDataChannel"
-#        ]
-#      },
-#      {
-#        Effect = var.iam_effect.allow
-#        Action = [
-#          "kms:Decrypt"
-#        ]
-#        Resource = aws_kms_key.this.arn
-#      }
-#    ]
-#  })
-#}

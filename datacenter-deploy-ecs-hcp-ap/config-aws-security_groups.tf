@@ -77,7 +77,7 @@ resource "aws_security_group" "example_client_app_alb" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  # Double check this value between 1 and 2 ECS clusters.
+
   egress {
     from_port = 0
     to_port   = 0

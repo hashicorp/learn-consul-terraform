@@ -1,8 +1,14 @@
-locals {
 
+
+
+
+# Note to Reader: These local variables are intended to make the terraform code you're working with more readable.
+#There's no no need to modify the values in this file. For clarity, each block of variables has a comment of the filename
+# where these local variables are used.
+
+locals {
   # config-aws-iam.tf
   ecs_service_role = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS"
-
 
   # config-aws-vpc.tf
   ap_global_name = var.ecs_ap_globals.global_prefix
@@ -84,6 +90,16 @@ locals {
       }
     }
   retry_join_url = jsondecode(base64decode(hcp_consul_cluster.example.consul_config_file))["retry_join"]
+  requires_target_group_association = [
+  for c in var.hashicups_settings_public : c if c.name == var.ecs_ap_globals.task_families.frontend || c.name == var.ecs_ap_globals.task_families.public-api
+  ]
+  load_balancer_public_apps_config = [
+  for n in local.requires_target_group_association : {
+    container_name = n.name
+    container_port = n.portMappings[0].containerPort
+    target_group   = aws_lb_target_group.hashicups[n.name].arn
+    }
+  ]
 
 
   # reader-aws-load_balancer.tf
@@ -102,9 +118,8 @@ locals {
   consul_ui = hcp_consul_cluster.example.consul_public_endpoint_url
   hashicups_url = "http://${aws_lb.example_client_app.dns_name}"
 
-
+  # reader-consuL-service_intentions.tf
   tasks_count = length(keys(var.ecs_ap_globals.task_families))
-  # task objects
   tnames = {
     frontend    = data.consul_service.each["frontend"].name
     payments    = data.consul_service.each["payments"].name
@@ -112,4 +127,10 @@ locals {
     public-api  = data.consul_service.each["public-api"].name
     product-api = data.consul_service.each["product-api"].name
   }
+  tasks = {
+    public = [for t in var.hashicups_settings_public : t.name]
+    private = [for t in var.hashicups_settings_private : t.name]
+  }
+
+
 }

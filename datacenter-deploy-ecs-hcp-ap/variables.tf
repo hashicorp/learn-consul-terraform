@@ -3,7 +3,6 @@ resource "random_id" "random" {
 }
 
 variable "ecs_ap_globals" {
-  #type = any
   default = {
     global_prefix = "ap",
     acl_controller = {
@@ -54,8 +53,8 @@ variable "ecs_ap_globals" {
 }
 
 variable "region" {
-  description = "AWS region."
   type        = string
+  description = "AWS region."
   default     = "us-east-1"
 }
 
@@ -64,17 +63,6 @@ variable "hcp_datacenter_name" {
   description = "The name of datacenter the Consul cluster belongs to"
   default     = "dc1"
 }
-
-# Commenting out as this is causing a block in deploying the resources all at once.
-#variable "default_tags" {
-#  description = "Default Tags for AWS"
-#  type        = map(string)
-#  default = {
-#    Environment = "dev"
-#    Team        = "Education"
-#    tutorial    = "Consul Admin Partitions on ECS"
-#  }
-#}
 
 variable "hashicups_settings_private" {
   type        = any
