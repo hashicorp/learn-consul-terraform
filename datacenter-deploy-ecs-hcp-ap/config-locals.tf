@@ -101,36 +101,21 @@ locals {
     }
   ]
 
-
   # reader-aws-load_balancer.tf
   load_balancer_name         = local.ap_global_name
   load_balancer_target_group = "${local.ap_global_name}-target-group"
   load_balancer_type         = "application"
   lb_listener_type           = "forward"
 
-
   # reader-consul-service_defaults.tf
   consul_service_defaults_protocols = {
     tcp = "tcp"
   }
 
-  # outputs.tf
-  consul_ui = hcp_consul_cluster.example.consul_public_endpoint_url
-  hashicups_url = "http://${aws_lb.example_client_app.dns_name}"
-
-  # reader-consuL-service_intentions.tf
+  # reader-consul-service_intentions.tf
   tasks_count = length(keys(var.ecs_ap_globals.task_families))
-  tnames = {
-    frontend    = data.consul_service.each["frontend"].name
-    payments    = data.consul_service.each["payments"].name
-    postgres    = data.consul_service.each["postgres"].name
-    public-api  = data.consul_service.each["public-api"].name
-    product-api = data.consul_service.each["product-api"].name
-  }
   tasks = {
     public = [for t in var.hashicups_settings_public : t.name]
     private = [for t in var.hashicups_settings_private : t.name]
   }
-
-
 }
