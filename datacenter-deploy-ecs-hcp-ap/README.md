@@ -1,3 +1,6 @@
+## Admin Partitions with Consul on ECS and HCP Consul.
+
+Refer to the Learn tutorial to use this terraform code.
 ## Requirements
 
 | Name | Version |
