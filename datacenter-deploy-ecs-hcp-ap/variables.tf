@@ -29,9 +29,6 @@ variable "ecs_ap_globals" {
     },
     consul_enterprise_image = {
       enterprise_latest   = "public.ecr.aws/hashicorp/consul-enterprise:1.11.4-ent"
-      opensource_latest   = "public.ecr.aws/hashicorp/consul-enterprise:1.11.4"
-      enterprise_previous = "public.ecr.aws/hashicorp/consul-enterprise:1.11.3-ent"
-      opensource_previous = "public.ecr.aws/hashicorp/consul-enterprise:1.11.3"
     },
     cloudwatch_config = {
       log_driver    = "awslogs"
