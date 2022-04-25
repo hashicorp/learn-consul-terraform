@@ -3,8 +3,8 @@
 
 
 # Note to Reader: These local variables are intended to make the terraform code you're working with more readable.
-#There's no no need to modify the values in this file. For clarity, each block of variables has a comment of the filename
-# where these local variables are used.
+# For clarity, each block of variables has a comment of the filename where these local variables are used.
+# reader-* entries indicate values in files that don't exist yet, but will be created by you during the tutorial.
 
 locals {
   # config-aws-iam.tf
