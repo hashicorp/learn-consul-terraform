@@ -1,5 +1,5 @@
 output "ec2_client" {
-  value = aws_instance.consul_client[1].public_ip
+  value = aws_instance.consul_client[0].public_ip
 }
 
 output "consul_url" {

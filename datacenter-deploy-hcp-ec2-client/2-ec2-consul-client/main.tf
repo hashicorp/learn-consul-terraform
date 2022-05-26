@@ -109,7 +109,7 @@ resource "aws_security_group" "hcp_consul" {
 
 // Consul client instance
 resource "aws_instance" "consul_client" {
-  count                       = 2
+  count                       = 1
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t2.small"
   associate_public_ip_address = true
