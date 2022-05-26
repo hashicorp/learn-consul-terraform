@@ -45,31 +45,18 @@ setup_consul() {
   jq '.bind_addr = "{{ GetPrivateInterfaces | include \"network\" \"'${vpc_cidr}'\" | attr \"address\" }}"' client.temp.3 >/etc/consul.d/client.json
 }
 
-setup_nginx() {
-  mkdir -p /etc/nginx/
-  echo "${consul_acl_token}" | htpasswd -i -c /etc/nginx/.htaccess nomad
-  echo "${nginx_conf}" | base64 -d >/etc/nginx/nginx.conf
-  systemctl restart nginx
-}
-
 cd /home/ubuntu/
 
 echo "${consul_service}" | base64 -d >consul.service
-echo "${nomad_service}" | base64 -d >nomad.service
-echo "${hashicups}" | base64 -d >hashicups.nomad
 
 setup_networking
 setup_deps
 
-setup_nginx
 setup_consul
 
 start_service "consul"
-start_service "nomad"
 
 # nomad and consul service is type simple and might not be up and running just yet.
 sleep 10
-
-nomad run hashicups.nomad
 
 echo "done"
