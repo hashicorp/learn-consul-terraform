@@ -73,40 +73,6 @@ resource "aws_security_group" "allow_ssh" {
   }
 }
 
-// Security groups
-resource "aws_security_group" "hcp_consul" {
-  name        = "hcp_consul"
-  description = "HCP Consul security group"
-  vpc_id      = data.aws_vpc.selected.id
-
-  ingress {
-    description = "Consul LAN Serf (tcp)"
-    from_port   = 8301
-    to_port     = 8301
-    protocol    = "tcp"
-    cidr_blocks = [data.hcp_hvn.selected.cidr_block]
-  }
-
-  ingress {
-    description = "Consul LAN Serf (udp)"
-    from_port   = 8301
-    to_port     = 8301
-    protocol    = "udp"
-    cidr_blocks = [data.hcp_hvn.selected.cidr_block]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "hcp_consul"
-  }
-}
-
 // Consul client instance
 resource "aws_instance" "consul_client" {
   count                       = 1
@@ -115,7 +81,7 @@ resource "aws_instance" "consul_client" {
   associate_public_ip_address = true
   subnet_id                   = var.subnet_id
   vpc_security_group_ids = [
-    aws_security_group.hcp_consul.id,
+    var.hcp_consul_security_group_id,
     aws_security_group.allow_ssh.id
   ]
   key_name = aws_key_pair.consul_client.key_name

@@ -13,3 +13,7 @@ output "subnet_id" {
 output "hcp_consul_cluster_id" {
   value = hcp_consul_cluster.main.cluster_id
 }
+
+output "hcp_consul_security_group" {
+  value = module.aws_hcp_consul.security_group_id
+}

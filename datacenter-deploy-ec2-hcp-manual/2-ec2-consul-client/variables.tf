@@ -13,3 +13,7 @@ variable "subnet_id" {
 variable "cluster_id" {
   default = ""
 }
+
+variable "hcp_consul_security_group_id" {
+  default = ""
+}
