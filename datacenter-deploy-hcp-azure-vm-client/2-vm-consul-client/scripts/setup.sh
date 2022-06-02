@@ -38,11 +38,10 @@ setup_consul() {
 
   echo "${consul_ca}" | base64 -d >/etc/consul.d/ca.pem
   echo "${consul_config}" | base64 -d >client.temp.0
-  ip=$(hostname -I | awk '{print $1}')
   jq '.ca_file = "/etc/consul.d/ca.pem"' client.temp.0 >client.temp.1
   jq --arg token "${consul_acl_token}" '.acl += {"tokens":{"agent":"\($token)"}}' client.temp.1 >client.temp.2
   jq '.ports = {"grpc":8502}' client.temp.2 >client.temp.3
-  jq '.bind_addr = "{{ GetPrivateInterfaces | include \"network\" \"'${vpc_cidr}'\" | attr \"address\" }}"' client.temp.3 >/etc/consul.d/client.json
+  jq '.bind_addr = "{{ GetPrivateIP }}"' client.temp.3 >/etc/consul.d/client.json
 }
 
 cd /home/ubuntu/

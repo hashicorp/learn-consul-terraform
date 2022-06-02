@@ -15,76 +15,60 @@ resource "hcp_consul_cluster_root_token" "token" {
 }
 
 # Create Network Security Group and rule
-resource "azurerm_network_security_group" "allow_ssh" {
-  name                = "allow_ssh"
-  location            = data.azurerm_resource_group.selected.location
-  resource_group_name = data.azurerm_resource_group.selected.name
-
-  security_rule {
-    name                       = "SSH"
-    priority                   = 200
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
+resource "azurerm_network_security_rule" "allow_ssh" {
+  name                        = "allow_ssh"
+  priority                    = 200
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "22"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = data.azurerm_resource_group.selected.name
+  network_security_group_name = var.azurerm_nsg
 }
 
-resource "azurerm_network_security_group" "hcp_consul" {
-  name                = "hcp_consul"
-  location            = data.azurerm_resource_group.selected.location
-  resource_group_name = data.azurerm_resource_group.selected.name
+resource "azurerm_network_security_rule" "hcp_consul_serf_tcp" {
+  name                        = "Consul LAN Serf (tcp)"
+  priority                    = 201
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "8301"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = data.azurerm_resource_group.selected.name
+  network_security_group_name = var.azurerm_nsg
+}
 
-  security_rule {
-    name                       = "SSH"
-    priority                   = 200
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
+resource "azurerm_network_security_rule" "hcp_consul_serf_udp" {
+  name                        = "Consul LAN Serf (udp)"
+  priority                    = 202
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Udp"
+  source_port_range           = "*"
+  destination_port_range      = "8301"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = data.azurerm_resource_group.selected.name
+  network_security_group_name = var.azurerm_nsg
+}
 
-  security_rule {
-    name                       = "Consul LAN Serf (tcp)"
-    priority                   = 201
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "8301"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "Consul LAN Serf (udp)"
-    priority                   = 202
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Udp"
-    source_port_range          = "*"
-    destination_port_range     = "8301"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "egress-internet"
-    priority                   = 203
-    direction                  = "Outbound"
-    access                     = "Allow"
-    protocol                   = "*"
-    source_port_range          = "*"
-    destination_port_range     = "*"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
+resource "azurerm_network_security_rule" "allow_egress" {
+  name                        = "egress-internet"
+  priority                    = 203
+  direction                   = "Outbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = data.azurerm_resource_group.selected.name
+  network_security_group_name = var.azurerm_nsg
 }
 
 # By default if the user doesn't disable it we create an asg
@@ -112,14 +96,14 @@ resource "azurerm_network_interface" "client_nic" {
   }
 }
 
-# resource "azurerm_network_interface_security_group_association" "ssh" {
-#   network_interface_id      = azurerm_network_interface.client_nic.id
-#   network_security_group_id = azurerm_network_security_group.allow_ssh.id
-# }
+data "azurerm_network_security_group" "selected" {
+  name                = var.azurerm_nsg
+  resource_group_name = data.azurerm_resource_group.selected.name
+}
 
 resource "azurerm_network_interface_security_group_association" "hcp_consul" {
   network_interface_id      = azurerm_network_interface.client_nic.id
-  network_security_group_id = azurerm_network_security_group.hcp_consul.id
+  network_security_group_id = data.azurerm_network_security_group.selected.id
 }
 
 resource "random_string" "random" {
@@ -149,11 +133,11 @@ resource "azurerm_linux_virtual_machine" "consul_client" {
     version   = "latest"
   }
 
-  admin_username                  = "adminuser"
+  admin_username                  = "ubuntu"
   disable_password_authentication = true
 
   admin_ssh_key {
-    username   = "adminuser"
+    username   = "ubuntu"
     public_key = file("./consul-client.pub")
   }
 

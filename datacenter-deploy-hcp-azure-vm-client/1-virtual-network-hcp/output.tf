@@ -12,7 +12,11 @@ output "consul_url" {
 }
 
 output "azurerm_resource_group" {
-  value = azurerm_resource_group.rg.id
+  value = azurerm_resource_group.rg.name
+}
+
+output "azurerm_nsg" {
+  value = azurerm_network_security_group.nsg.name
 }
 
 output "prefix" {

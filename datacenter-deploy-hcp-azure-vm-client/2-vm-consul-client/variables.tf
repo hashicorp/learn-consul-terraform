@@ -21,3 +21,9 @@ variable "subnet_id" {
   description = "Azure subnet ID"
   default     = ""
 }
+
+variable "azurerm_nsg" {
+  type        = string
+  description = "Azure Network security group"
+  default     = ""
+}
