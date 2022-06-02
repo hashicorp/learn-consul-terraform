@@ -60,18 +60,3 @@ resource "azurerm_network_security_rule" "ingress_gw" {
   resource_group_name         = var.azure_rg_name
   network_security_group_name = var.azure_nsg_name
 }
-
-
-resource "azurerm_network_security_rule" "ingress_gw_80" {
-  name                        = "ingress-gateway-80"
-  priority                    = 201
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "*"
-  source_address_prefix       = "*"
-  source_port_range           = "*"
-  destination_address_prefix  = "*"
-  destination_port_range      = "80"
-  resource_group_name         = var.azure_rg_name
-  network_security_group_name = var.azure_nsg_name
-}
