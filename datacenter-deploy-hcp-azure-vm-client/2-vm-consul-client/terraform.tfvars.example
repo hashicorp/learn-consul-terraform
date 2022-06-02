@@ -1,0 +1,4 @@
+hcp_consul_cluster_id  = "learn-hcp-consul-vm-client"
+azurerm_resource_group = "learn-hcp-consul-vm-client-gid"
+prefix                 = "learn-hcp-consul-vm-client"
+subnet_id              = "/subscriptions/c9ed8610-47a3-4107-a2b2-a322114dfb29/resourceGroups/learn-hcp-consul-vm-client-gid/providers/Microsoft.Network/virtualNetworks/learn-hcp-consul-vm-client-vnet/subnets/..."

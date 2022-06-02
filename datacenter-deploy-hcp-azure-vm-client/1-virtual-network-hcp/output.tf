@@ -10,3 +10,15 @@ output "consul_root_token" {
 output "consul_url" {
   value = hcp_consul_cluster.main.consul_public_endpoint_url
 }
+
+output "azurerm_resource_group" {
+  value = azurerm_resource_group.rg.id
+}
+
+output "prefix" {
+  value = local.cluster_id
+}
+
+output "subnet_id" {
+  value = module.network.vnet_subnets[0]
+}

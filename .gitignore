@@ -1,3 +1,6 @@
+consul-client
+consul-client.pub
+
 # Local .terraform directories
 **/.terraform/*
 *./terraform/
