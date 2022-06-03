@@ -56,7 +56,6 @@ resource "aws_key_pair" "consul_client" {
 resource "aws_security_group" "allow_ssh" {
   name        = "allow_ssh"
   description = "Allow SSH inbound traffic"
-  # vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
   vpc_id = data.aws_vpc.selected.id
 
   ingress {
@@ -65,7 +64,7 @@ resource "aws_security_group" "allow_ssh" {
     to_port          = 22
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   tags = {
