@@ -112,6 +112,12 @@ resource "random_string" "random" {
   upper   = false
 }
 
+# Create (and display) an SSH key
+resource "tls_private_key" "example_ssh" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 resource "azurerm_linux_virtual_machine" "consul_client" {
   count                 = 1
   name                  = "consul-client-${count.index}-${random_string.random.id}"
@@ -138,7 +144,7 @@ resource "azurerm_linux_virtual_machine" "consul_client" {
 
   admin_ssh_key {
     username   = "ubuntu"
-    public_key = file("./consul-client.pub")
+    public_key = tls_private_key.example_ssh.public_key_openssh
   }
 
   user_data = base64encode(templatefile("${path.module}/scripts/user_data.sh", {

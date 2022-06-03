@@ -1,7 +1,7 @@
 locals {
   network_region = "West US 2"
   hvn_region     = "westus2"
-  cluster_id     = "learn-hcp-consul-vm-client1"
+  cluster_id     = "learn-hcp-consul-vm-client"
   hvn_id         = "${local.cluster_id}-hvn"
   tier           = "development"
 }

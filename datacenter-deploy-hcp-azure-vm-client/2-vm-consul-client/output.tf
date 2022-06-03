@@ -2,6 +2,11 @@ output "vm_client" {
   value = azurerm_linux_virtual_machine.consul_client[0].public_ip_address
 }
 
+output "tls_private_key" {
+  value     = tls_private_key.example_ssh.private_key_pem
+  sensitive = true
+}
+
 output "consul_url" {
   value = data.hcp_consul_cluster.selected.public_endpoint ? (
     data.hcp_consul_cluster.selected.consul_public_endpoint_url
