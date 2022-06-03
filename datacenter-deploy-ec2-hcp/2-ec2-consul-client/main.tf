@@ -1,12 +1,10 @@
 locals {
-  vpc_region = "us-west-2"
+  aws_region = "us-west-2"
   hvn_region = "us-west-2"
-  cluster_id = "learn-hcp-consul-ec2-client"
-  hvn_id     = "learn-hcp-consul-ec2-client-hvn"
 }
 
 provider "aws" {
-  region = "us-west-2"
+  region = local.aws_region
 }
 
 data "aws_vpc" "selected" {
@@ -48,7 +46,7 @@ data "aws_ami" "ubuntu" {
 
 // Key pair
 resource "aws_key_pair" "consul_client" {
-  key_name   = "consul_client-tu"
+  key_name   = "${var.cluster_id}-consul-client"
   public_key = file("./consul-client.pub")
 }
 
@@ -56,7 +54,7 @@ resource "aws_key_pair" "consul_client" {
 resource "aws_security_group" "allow_ssh" {
   name        = "allow_ssh"
   description = "Allow SSH inbound traffic"
-  vpc_id = data.aws_vpc.selected.id
+  vpc_id      = data.aws_vpc.selected.id
 
   ingress {
     description      = "SSH into instance"

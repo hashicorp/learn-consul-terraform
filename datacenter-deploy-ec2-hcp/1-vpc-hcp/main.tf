@@ -1,12 +1,18 @@
+resource "random_string" "tutorial" {
+  length  = 4
+  special = false
+  upper   = false
+}
+
 locals {
-  vpc_region = "us-west-2"
+  aws_region = "us-west-2"
   hvn_region = "us-west-2"
-  cluster_id = "learn-hcp-consul-ec2-client"
-  hvn_id     = "learn-hcp-consul-ec2-client-hvn"
+  cluster_id = "learn-hcp-consul-ec2-client-${random_string.tutorial.id}"
+  hvn_id     = "learn-hcp-consul-ec2-client-${random_string.tutorial.id}-hvn"
 }
 
 provider "aws" {
-  region = local.vpc_region
+  region = local.aws_region
 }
 
 data "aws_availability_zones" "available" {
@@ -18,7 +24,7 @@ data "aws_availability_zones" "available" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.10.0"
+  version = "~> 3.10.0"
 
   name                 = "${local.cluster_id}-vpc"
   cidr                 = "10.0.0.0/16"
