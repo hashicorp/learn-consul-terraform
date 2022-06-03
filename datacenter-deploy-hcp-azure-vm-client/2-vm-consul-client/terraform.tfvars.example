@@ -1,5 +1,5 @@
 hcp_consul_cluster_id  = "learn-hcp-consul-vm-client1"
 azurerm_resource_group = "learn-hcp-consul-vm-client1-gid"
 prefix                 = "learn-hcp-consul-vm-client1"
-subnet_id              = "/subscriptions/c9ed8610-47a3-4107-a2b2-a322114dfb29/resourceGroups/learn-hcp-consul-vm-client1-gid/providers/Microsoft.Network/virtualNetworks/learn-hcp-consul-vm-client1-vnet/subnets/subnet1"
 azurerm_nsg            = "learn-hcp-consul-vm-client1-nsg"
+subnet_id              = "/subscriptions/c9ed8610-47a2-4107-a2b2-a322114dfb29/resourceGroups/learn-hcp-consul-vm-client1-gid/providers/Microsoft.Network/virtualNetworks/learn-hcp-consul-vm-client1-vnet/subnets/subnet1"
