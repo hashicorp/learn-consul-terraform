@@ -1,5 +1,8 @@
+*.pub
 consul-client
-consul-client.pub
+
+client_config.json
+config.yaml
 
 # Local .terraform directories
 **/.terraform/*
