@@ -19,10 +19,10 @@ resource "hcp_hvn" "hvn" {
 }
 
 resource "hcp_consul_cluster" "main" {
-  cluster_id      = var.cluster_id
+  cluster_id      = var.hcp_consul_cluster_id
   hvn_id          = hcp_hvn.hvn.hvn_id
   public_endpoint = true
-  tier            = var.tier
+  tier            = var.hcp_consul_tier
 }
 
 resource "hcp_consul_cluster_root_token" "token" {
@@ -44,7 +44,7 @@ module "hcp_peering" {
 
   # Optional
   security_group_names = [var.azure_nsg_name]
-  prefix               = var.cluster_id
+  prefix               = var.hcp_consul_cluster_id
 }
 
 resource "azurerm_network_security_rule" "ingress_gw" {

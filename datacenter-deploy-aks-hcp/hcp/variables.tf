@@ -19,51 +19,44 @@ variable "hvn_cidr_block" {
 }
 
 // Azure variables
-
-variable "network_region" {
-  type        = string
-  description = "the network region"
-  default     = "West US 2"
-}
-
-variable "cluster_id" {
+variable "hcp_consul_cluster_id" {
   type        = string
   description = "The cluster id is unique. All other unique values will be derived from this (resource group, vnet etc)"
   default     = "learn-hcp-consul-aks-client"
 }
 
-variable "tier" {
+variable "hcp_consul_tier" {
   type        = string
   description = "The HCP Consul tier to use when creating a Consul cluster"
   default     = "development"
+
+  validation {
+    condition     = contains(["development", "standard", "plus"], var.hcp_consul_tier)
+    error_message = "HCP Consul tier must be development, standard, or plus."
+  }
 }
 
 variable "azure_vnet_name" {
   type        = string
   description = "Azure virtual network name"
-  default     = ""
 }
 
 variable "azure_vnet_id" {
   type        = string
   description = "Azure virtual network id"
-  default     = ""
 }
 
 variable "azure_rg_name" {
   type        = string
   description = "Azure resource group name"
-  default     = ""
 }
 
 variable "azure_nsg_name" {
   type        = string
   description = "Azure network security group name"
-  default     = ""
 }
 
 variable "azure_subnet_ids" {
   type        = list(string)
   description = "Azure subnet ids"
-  default     = []
 }
