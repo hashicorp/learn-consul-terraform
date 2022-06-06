@@ -1,5 +1,5 @@
-*.pub
 consul-client
+*.pub
 
 client_config.json
 config.yaml
