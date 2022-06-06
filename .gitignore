@@ -1,3 +1,6 @@
+*.pub
+consul-client
+
 client_config.json
 config.yaml
 
