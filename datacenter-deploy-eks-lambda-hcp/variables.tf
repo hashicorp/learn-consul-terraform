@@ -35,9 +35,10 @@ variable "cluster_networking" {
 }
 
 variable "cluster_definitions" {
+  description = "Cluster definitions for EKS"
+  type = map(any)
   default = {
-    description = "Cluster definitions for EKS"
-    type = map(any)
+
     name = "eksLambConsul"
   }
 }
