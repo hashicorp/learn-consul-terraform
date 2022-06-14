@@ -1,5 +1,6 @@
 locals {
   shared_annotations_with_prometheus = merge(var.shared_annnotations, var.shared_annotations_prometheus)
+
 }
 
 resource "kubernetes_service_account" "hashicups_service_accounts" {
@@ -8,6 +9,8 @@ resource "kubernetes_service_account" "hashicups_service_accounts" {
     name = each.value.ServiceAccount.sa_name
   }
   automount_service_account_token = each.value.ServiceAccount.automount_service_account_token
+  # Ensures the resources which are dependent on this resource will be created after Consul
+  depends_on = [module.eks, helm_release.consul_enterprise, kubectl_manifest.hashicups_service_defaults, kubectl_manifest.hashicups_service_intentions]
 }
 
 resource "kubernetes_service" "hashicups_services" {
@@ -33,16 +36,18 @@ resource "kubernetes_service" "hashicups_services" {
       app = each.key
     }
   }
+  depends_on = [kubernetes_service_account.hashicups_service_accounts]
 }
 
 resource "kubernetes_config_map" "hashicups_config_maps" {
-  for_each = var.service_variables
+  for_each = { for k, v in var.service_variables : k => v if v.has_cm == true }
   metadata {
     name = each.value.ConfigMap.cm_name
   }
   data = {
     config = each.value.ConfigMap.cm_data.config
   }
+  depends_on = [kubernetes_service_account.hashicups_service_accounts]
 }
 
 resource "kubernetes_deployment" "kubernetes_deployments" {
@@ -61,11 +66,35 @@ resource "kubernetes_deployment" "kubernetes_deployments" {
       spec {
         service_account_name = each.key
         dynamic "volume" {
-          for_each = each.value.Deployment.spec_config.template_config.template_spec_config.volumes_config
+          for_each = [for vol in each.value.Deployment.spec_config.template_config.template_spec_config.volumes_config : vol
+                      if each.value.has_vol == true && each.value.has_empty_dir == true ]
           content {
             name = volume.value.volume_name
             dynamic "config_map" {
-              for_each = volume.value.config_maps_config
+              for_each = [ for vl in volume.value.config_maps_config : vl
+                           if each.value.has_cm == true ]
+              content {
+                name = config_map.value.config_map_name
+                items {
+                  key  = config_map.value.config_file_key
+                  path = config_map.value.config_file
+                }
+              }
+            }
+            empty_dir {}
+          }
+        }
+
+        dynamic "volume" {
+          for_each = [for vol in each.value.Deployment.spec_config.template_config.template_spec_config.volumes_config : vol
+                      if each.value.has_vol == true && each.value.has_empty_dir == false ]
+          content {
+            name = volume.value.volume_name
+            dynamic "config_map" {
+              for_each = [
+              for vl in volume.value.config_maps_config : vl
+              if each.value.has_cm == true
+              ]
               content {
                 name = config_map.value.config_map_name
                 items {
@@ -75,12 +104,15 @@ resource "kubernetes_deployment" "kubernetes_deployments" {
               }
             }
           }
+
         }
 
         dynamic "container" {
           for_each = each.value.Deployment.spec_config.template_config.template_spec_config.container_config
           content {
             name = container.value.container_name
+            image = container.value.container_image
+            image_pull_policy = container.value.image_pull_policy
             dynamic "volume_mount" {
               for_each = [for vmc in container.value.volume_mounts_config : vmc
                 if container.value.vol_mount_conf == true
@@ -134,7 +166,6 @@ resource "kubernetes_deployment" "kubernetes_deployments" {
       match_labels = each.value.Deployment.spec_config.selector_config.labels
     }
   }
+  depends_on = [kubernetes_service_account.hashicups_service_accounts]
 }
-
-
 
