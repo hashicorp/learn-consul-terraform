@@ -92,11 +92,41 @@ variable "shared_annotations_prometheus" {
   }
 }
 
+variable "global_kube_resources" {
+  default = {
+    payments = {
+      has_volumes = false
+      has_volume_mounts = false
+    }
+    public-api = {
+      has_volumes = false
+      has_volume_mounts = false
+    }
+    product-api = {
+      has_volumes = true
+      has_configmap = true
+      has_volume_mounts = true
+    }
+    postgres = {
+      has_volumes = true
+      has_configmap = false
+      has_volume_mounts = true
+    }
+    frontend = {
+      has_volumes = false
+      has_volume_mounts = false
+    }
+  }
+}
+
 # HashiCups configuration map, with each service containing the kube config type it requires to operate
 variable "service_variables" {
   type = any
   default = {
     payments = {
+      has_empty_dir = false
+      has_vol = false
+      has_cm = false
       ServiceAccount = {
         sa_name                         = "payments"
         automount_service_account_token = true
@@ -135,18 +165,7 @@ variable "service_variables" {
               annotations = {}
             }
             template_spec_config = {
-              volumes_config = [
-                {
-                  volume_name = null
-                  config_maps_config = [
-                    {
-                      config_map_name = null
-                      config_file_key = null
-                      config_file     = null
-                    }
-                  ]
-                }
-              ]
+              volumes_config = [{}]
               container_config = [
                 {
                   container_name    = "payments"
@@ -172,6 +191,9 @@ variable "service_variables" {
       }
     }
     public-api = {
+      has_empty_dir = false
+      has_cm = false
+      has_vol = false
       ServiceAccount = {
         sa_name                         = "public-api"
         automount_service_account_token = true
@@ -210,23 +232,11 @@ variable "service_variables" {
               }
               prometheus = true
               annotations = {
-                "consul.hashicorp.com/connect-service-upstreams" = "products-api:9090, payments:1800"
+                "consul.hashicorp.com/connect-service-upstreams" = "product-api:9090, payments:1800"
               }
             }
             template_spec_config = {
-              volumes_config = [
-                {
-                  volume_name = null
-                  config_maps_config = [
-                    {
-                      config_map      = false
-                      config_map_name = null
-                      config_file_key = null
-                      config_file     = null
-                    }
-                  ]
-                }
-              ]
+              volumes_config = [{}]
               container_config = [
                 {
                   container_name       = "public-api"
@@ -254,10 +264,7 @@ variable "service_variables" {
                       port = 8080
                     }
                   ]
-                  container_args_config = [
-                    "--reporter.grpc.host-port=dns:///jaeger-collector-headless.default:14250",
-                    "--reporter.type=grpc"
-                  ]
+                  container_args_config = []
                   liveness              = false
                   liveness_probe_config = [{}]
                 },
@@ -311,6 +318,9 @@ variable "service_variables" {
       }
     }
     product-api = {
+      has_empty_dir = false
+      has_cm = true
+      has_vol = true
       ServiceAccount = {
         sa_name                         = "product-api"
         automount_service_account_token = true
@@ -371,7 +381,7 @@ variable "service_variables" {
               ]
               container_config = [
                 {
-                  container_name    = "payments"
+                  container_name    = "product-api"
                   container_image   = "hashicorpdemoapp/product-api:v0.0.20"
                   image_pull_policy = "Always"
                   vol_mount_conf    = true
@@ -416,6 +426,9 @@ variable "service_variables" {
       }
     }
     postgres = {
+      has_cm = false
+      has_vol = true
+      has_empty_dir = true
       ServiceAccount = {
         sa_name                         = "postgres"
         automount_service_account_token = true
@@ -457,13 +470,7 @@ variable "service_variables" {
               volumes_config = [
                 {
                   volume_name = "pgdata"
-                  config_maps_config = [
-                    {
-                      config_map_name = null
-                      config_file_key = null
-                      config_file     = null
-                    }
-                  ]
+                  config_maps_config = [{}]
                 }
               ]
               container_config = [
@@ -510,6 +517,9 @@ variable "service_variables" {
       }
     }
     frontend = {
+      has_cm = false
+      has_vol = false
+      has_empty_dir = false
       ServiceAccount = {
         sa_name                         = "frontend"
         automount_service_account_token = true
@@ -548,18 +558,7 @@ variable "service_variables" {
               annotations = {}
             }
             template_spec_config = {
-              volumes_config = [
-                {
-                  volume_name = null
-                  config_maps_config = [
-                    {
-                      config_map_name = null
-                      config_file_key = null
-                      config_file     = null
-                    }
-                  ]
-                }
-              ]
+              volumes_config = [{}]
               container_config = [
                 {
                   container_name       = "frontend"
@@ -586,6 +585,129 @@ variable "service_variables" {
               ]
             }
           }
+        }
+      }
+    }
+  }
+}
+
+
+variable "consul_kube_api_creds" {
+  default = {
+    ServiceIntentions = {
+      apiVersion = "consul.hashicorp.com/v1alpha1"
+    }
+    ServiceDefaults = {
+      apiVersion = "consul.hashicorp.com/v1alpha1"
+    }
+  }
+}
+
+variable "custom_resource_definitions_config" {
+  default = {
+    ServiceIntentions = {
+      payments = {
+        namespace = "default"
+        metadata = {
+          "name" =  "payments"
+          "namespace" = "default"
+        },
+        destination = {
+          "name" =  "payments"
+          "namespace" = "default"
+        },
+        sources = [{
+          "action" = "allow"
+          "name" = "public-api"
+          "namespace" = "default"
+        }]
+      }
+      product-api = {
+        namespace = "default"
+        metadata = {
+          "name" =  "product-api"
+          "namespace" = "default"
+        },
+        destination = {
+          "name" =  "product-api"
+          "namespace" = "default"
+        },
+        sources = [{
+          "action" = "allow"
+          "name" = "public-api"
+          "namespace" = "default"
+        }]
+      }
+      public-api = {
+        namespace = "default"
+        metadata = {
+          "name" =  "public-api"
+          "namespace" = "default"
+        },
+        destination = {
+          "name" =  "public-api"
+          "namespace" = "default"
+        },
+        sources = [
+          {
+            "action" = "allow"
+            "name" = "frontend"
+            "namespace" = "default"
+          }
+        ]
+      }
+      postgres = {
+        namespace = "default"
+        metadata = {
+          "name" =  "postgres"
+          "namespace" = "default"
+        },
+        destination = {
+          "name" =  "postgres"
+          "namespace" = "default"
+        },
+        sources = [{
+          "action" = "allow"
+          "name" = "product-api"
+          "namespace" = "default"
+        }]
+      }
+    }
+    ServiceDefaults = {
+      frontend = {
+        metadata = {
+          "name" = "frontend"
+          "namespace" = "default"
+        }
+        spec = {
+          "protocol" = "http"
+        }
+      }
+      postgres = {
+        metadata = {
+          "name" = "postgres"
+          "namespace" = "default"
+        }
+        spec = {
+          "protocol" = "tcp"
+        }
+      }
+      product-api = {
+        metadata = {
+          "name" = "product-api"
+          "namespace" = "default"
+        }
+        spec = {
+          "protocol" = "http"
+        }
+      }
+      payments = {
+        metadata = {
+          "name" = "payments"
+          "namespace" = "default"
+        }
+        spec = {
+          "protocol" = "http"
         }
       }
     }
