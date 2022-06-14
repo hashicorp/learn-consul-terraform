@@ -1,23 +1,10 @@
-# TODO This can probably be removed in favor of specifying the public ecr repo instead of
-# creating a new private ECR repository.
 # Create ECR Repository in account
 resource "aws_ecr_repository" "lambda-registrator" {
   name = var.ecr_config.ecr_repository_name
 }
 
 
-resource "aws_lambda_function" "upload_lambda_registrator_to_ecr" {
-  function_name = "ecrUpload"
-  role          = "some_role"
-  architectures = ["x86_64"]
-  runtime       = "python3.9"
-  handler       = "upload.main"
-
-}
-
-
 # Push to ECR
-# TODO This can be moved to a Lambda function itself, to remove the null_resource invocation
 resource "null_resource" "push-lambda-registrator-to-ecr" {
   triggers = {
     ecr_base_image = var.ecr_config.ecr_base_image
