@@ -1,8 +1,6 @@
 global:
   name: consul
   enabled: false
-#  datacenter: dc1
-#  image: hashicorp/consul-enterprise:1.11.4-ent
   enableConsulNamespaces: true
   enterpriseLicense:
     secretName: consul-ent-license
@@ -23,16 +21,11 @@ global:
       secretKey: tls.crt
 externalServers:
   enabled: true
-#  hosts:
-#  - ${HCP_CONSUL_PUBLIC_ENDPOINT}
   httpsPort: 443
   useSystemRoots: true
-#  k8sAuthMethodHost: ${KUBERNETES_CONTROL_PLANE}
 client:
   enabled: true
   grpc: true
-#  join:
-#  - ${HCP_CONSUL_ADDR}
 connectInject:
   enabled: true
   envoyExtraArgs: "--component-log-level upstream:debug,http:debug,router:debug,config:debug"
