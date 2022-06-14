@@ -77,5 +77,5 @@ resource "kubernetes_secret" "consul_gossip_key" {
   data = {
     "key" = var.eks_config.consul_gossip_key_b64
   }
-  depends_on = [module.eks]
+  depends_on = [module.eks, kubernetes_secret.bootstrap_token, kubernetes_secret.consul_ca_cert, kubernetes_secret.license]
 }
