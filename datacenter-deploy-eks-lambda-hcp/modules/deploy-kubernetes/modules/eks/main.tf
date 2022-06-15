@@ -1,10 +1,13 @@
+locals {
+  cluster_name = "${var.cluster_name}-${var.eks_config.identifier}"
+}
 
 # Deploys Amazon EKS
 module "eks" {
   # Full URL due to this issue: https://github.com/VladRassokhin/intellij-hcl/issues/365
   source                          = "registry.terraform.io/terraform-aws-modules/eks/aws"
   version                         = ">=18.9.0"
-  cluster_name                    = var.cluster_name
+  cluster_name                    = local.cluster_name
   cluster_endpoint_private_access = true
   cluster_endpoint_public_access  = true
 

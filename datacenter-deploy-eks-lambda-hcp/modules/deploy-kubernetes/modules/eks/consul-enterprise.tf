@@ -19,7 +19,7 @@ resource "helm_release" "consul_enterprise" {
 
   set {
     name  = "global.image"
-    value = "hashicorp/consul-enterprise:1.12.2-ent"
+    value = "hashicorp/consul-enterprise:1.12.6-ent"
   }
   set {
     name  = "externalServers.hosts[0]"
