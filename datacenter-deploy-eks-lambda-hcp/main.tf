@@ -105,6 +105,11 @@ resource "aws_lambda_function" "lambda-payments" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "function_log_group" {
+  name              = "/aws/lambda/${aws_lambda_function.lambda-payments.function_name}"
+  retention_in_days = 7
+}
+
 resource "aws_iam_policy" "lambda_payments" {
   name        = "lambda-payments-policy-1"
   path        = "/"

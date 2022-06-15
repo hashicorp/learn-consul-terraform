@@ -37,17 +37,6 @@ resource "helm_release" "consul_enterprise" {
   depends_on = [module.eks, kubernetes_secret.bootstrap_token, kubernetes_secret.consul_ca_cert]
 }
 
-# resource "kubernetes_secret" "license" {
-#   metadata {
-#     name = "consul-ent-license"
-#   }
-#   type = "Opaque"
-#   data = {
-#     "key" = var.aws_config.consul_ent_license_b64
-#   }
-#   depends_on = [module.eks]
-# }
-
 resource "kubernetes_secret" "bootstrap_token" {
   metadata {
     name = "consul-bootstrap-token"
