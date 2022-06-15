@@ -4,7 +4,7 @@
 # }
 
 output "consul_url" {
-  value     = module.tutorial_infrastructure.consul_values.endpoint
+  value     = module.tutorial_infrastructure.consul_values.public_endpoint
   sensitive = true
 }
 

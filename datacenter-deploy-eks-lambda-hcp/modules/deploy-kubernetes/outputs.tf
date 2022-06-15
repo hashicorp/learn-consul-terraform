@@ -1,10 +1,11 @@
 output "consul_values" {
   value = {
-    cert       = module.hcp-tutorial-deployment.ca_certificate_file
-    gossip     = module.hcp-tutorial-deployment.consul_gossip_key
-    root_token = module.hcp-tutorial-deployment.consul_bootstrap_token
-    endpoint   = module.hcp-tutorial-deployment.hcp_consul_endpoint
-    kube       = module.aws-tutorial-deployment.kubernetes_control_plane
+    cert            = module.hcp-tutorial-deployment.ca_certificate_file
+    gossip          = module.hcp-tutorial-deployment.consul_gossip_key
+    root_token      = module.hcp-tutorial-deployment.consul_bootstrap_token
+    endpoint        = module.hcp-tutorial-deployment.hcp_consul_endpoint
+    public_endpoint = module.hcp-tutorial-deployment.hcp_consul_public_endpoint
+    kube            = module.aws-tutorial-deployment.kubernetes_control_plane
   }
   sensitive = true
 }
