@@ -8,3 +8,13 @@ output "consul_values" {
   }
   sensitive = true
 }
+
+output "eks_cluster_name" {
+  description = "EKS cluster ID."
+  value       = module.aws-tutorial-deployment.eks_cluster_name
+}
+
+output "aws_region" {
+  description = "AWS region"
+  value       = module.aws-tutorial-deployment.aws_region
+}

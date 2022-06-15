@@ -19,11 +19,6 @@ module "tutorial_infrastructure" {
   lambda_payments_path = "${path.module}/lambda-payments.zip"
 }
 
-output "consul_values" {
-  value     = module.tutorial_infrastructure.consul_values
-  sensitive = true
-}
-
 # TODO: Remove from final commit.
 # TODO: This commented out code will be available in the tutorial
 #locals {
@@ -37,9 +32,7 @@ output "consul_values" {
 #  type = "zip"
 # source_content = "${path.root}/payments-function"
 #  output_path = local.lambda_payments_path
-#
 #}
-#
 #
 #resource "aws_lambda_function" "lambda-payments" {
 #  filename         = local.lambda_payments_path
