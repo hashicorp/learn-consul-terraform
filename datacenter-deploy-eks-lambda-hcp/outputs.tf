@@ -1,7 +1,7 @@
-# output "consul_values" {
-#   value     = module.tutorial_infrastructure.consul_values
-#   sensitive = true
-# }
+output "consul_values" {
+  value     = module.tutorial_infrastructure.consul_values
+  sensitive = true
+}
 
 output "consul_url" {
   value     = module.tutorial_infrastructure.consul_values.public_endpoint

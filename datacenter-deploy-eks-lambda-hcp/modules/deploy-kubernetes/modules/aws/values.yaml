@@ -26,6 +26,13 @@ externalServers:
 client:
   enabled: true
   grpc: true
+  extraConfig: |
+    {
+    "connect":
+      {
+        "enable_serverless_plugin": true
+      }
+    }
 connectInject:
   enabled: true
   envoyExtraArgs: "--component-log-level upstream:debug,http:debug,router:debug,config:debug"

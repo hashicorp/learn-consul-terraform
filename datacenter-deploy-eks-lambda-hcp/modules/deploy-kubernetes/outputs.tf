@@ -19,3 +19,8 @@ output "aws_region" {
   description = "AWS region"
   value       = module.aws-tutorial-deployment.aws_region
 }
+
+output "kubernetes_control_plane" {
+  description = "EKS control plane"
+  value       = module.aws-tutorial-deployment.kubernetes_control_plane
+}
