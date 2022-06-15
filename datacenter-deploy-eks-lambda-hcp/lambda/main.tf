@@ -40,6 +40,6 @@ module "lambda-registration" {
   ecr_image_uri             = "${aws_ecr_repository.lambda-registrator.repository_url}:${var.ecr_config.ecr_image_tag}"
   subnet_ids                = var.lambda_config.private_subnets
   security_group_ids        = var.lambda_config.security_groups
-  sync_frequency_in_minutes = 5
+  sync_frequency_in_minutes = 2
 
 }

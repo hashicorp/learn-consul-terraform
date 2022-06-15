@@ -19,7 +19,7 @@ module "eks" {
     }
   }
 
-  vpc_id = var.eks_config.vpc_id
+  vpc_id = data.aws_vpc.this.id
   subnet_ids = setunion(
     var.eks_config.public_subnets,
     var.eks_config.private_subnets
@@ -46,6 +46,10 @@ module "eks" {
   }
 }
 
+
+data "aws_vpc" "this" {
+  id = var.eks_config.vpc_id
+}
 
 # Clean up errant ENIs from EKS deployment. Only runs during terraform destroy
 module "remove_eni" {

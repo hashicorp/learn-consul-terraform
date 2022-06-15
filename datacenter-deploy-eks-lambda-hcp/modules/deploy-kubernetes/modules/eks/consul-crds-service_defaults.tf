@@ -13,7 +13,10 @@ YAML
 
   provisioner "local-exec" {
     when = destroy
-    command =  "kubectl patch servicedefaults ${each.key} -p '{\"metadata\":{\"finalizers\":[]}}' --type=merge && kubectl delete servicedefaults ${each.key} --ignore-not-found=true"
+    command =  "bash ${path.module}/cleanup.sh \"${each.key}\" servicedefaults"
+    #command =  "kubectl patch servicedefaults ${each.key} -p '{\"metadata\":{\"finalizers\":[]}}' --type=merge && kubectl delete servicedefaults ${each.key} --ignore-not-found=true"
 
   }
+  depends_on = [helm_release.consul_enterprise]
 }
+

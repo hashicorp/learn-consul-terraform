@@ -22,6 +22,7 @@ spec:
   provisioner "local-exec" {
     # Part of the pre-reqs involve using kubectl, so this is not optimal, but okay given the environment
     when    = destroy
-    command = "kubectl patch serviceintentions ${each.key} -p '{\"metadata\":{\"finalizers\":[]}}' --type=merge && kubectl delete serviceintentions ${each.key} --ignore-not-found=true"
+    command = "bash ${path.module}/cleanup.sh \"${each.key}\" serviceintentions"
   }
+  depends_on = [helm_release.consul_enterprise]
 }

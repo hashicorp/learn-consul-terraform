@@ -121,19 +121,19 @@ variable "global_kube_resources" {
 
 # HashiCups configuration map, with each service containing the kube config type it requires to operate
 variable "service_variables" {
-  type = any
+  type    = any
   default = {
     payments = {
-      has_empty_dir = false
-      has_vol = false
-      has_cm = false
+      has_empty_dir  = false
+      has_vol        = false
+      has_cm         = false
       ServiceAccount = {
         sa_name                         = "payments"
         automount_service_account_token = true
       }
       Service = {
         spec_type = ""
-        ports = [
+        ports     = [
           {
             pname     = "http"
             pprotocol = "TCP"
@@ -150,7 +150,7 @@ variable "service_variables" {
       }
       Deployment = {
         spec_config = {
-          replica_count = 1
+          replica_count   = 1
           selector_config = {
             labels = {
               app = "payments"
@@ -165,12 +165,12 @@ variable "service_variables" {
               annotations = {}
             }
             template_spec_config = {
-              volumes_config = [{}]
+              volumes_config   = [{}]
               container_config = [
                 {
-                  container_name    = "payments"
-                  container_image   = "hashicorpdemoapp/payments:v0.0.14"
-                  image_pull_policy = "Always"
+                  container_name         = "payments"
+                  container_image        = "hashicorpdemoapp/payments:v0.0.14"
+                  image_pull_policy      = "Always"
                   container_ports_config = [
                     {
                       port = 8080
@@ -191,16 +191,16 @@ variable "service_variables" {
       }
     }
     public-api = {
-      has_empty_dir = false
-      has_cm = false
-      has_vol = false
+      has_empty_dir  = false
+      has_cm         = false
+      has_vol        = false
       ServiceAccount = {
         sa_name                         = "public-api"
         automount_service_account_token = true
       }
       Service = {
         spec_type = "ClusterIP"
-        ports = [
+        ports     = [
           {
             #pname     = null
             #pprotocol = null
@@ -217,7 +217,7 @@ variable "service_variables" {
       }
       Deployment = {
         spec_config = {
-          replica_count = 1
+          replica_count   = 1
           selector_config = {
             labels = {
               app     = "public-api"
@@ -230,21 +230,21 @@ variable "service_variables" {
                 app     = "public-api"
                 service = "public-api"
               }
-              prometheus = true
+              prometheus  = true
               annotations = {
                 "consul.hashicorp.com/connect-service-upstreams" = "product-api:9090, payments:1800"
               }
             }
             template_spec_config = {
-              volumes_config = [{}]
+              volumes_config   = [{}]
               container_config = [
                 {
-                  container_name       = "public-api"
-                  container_image      = "hashicorpdemoapp/public-api:v0.0.6"
-                  image_pull_policy    = "Always"
-                  vol_mount_conf       = false
-                  volume_mounts_config = [{}]
-                  env_config           = true
+                  container_name               = "public-api"
+                  container_image              = "hashicorpdemoapp/public-api:v0.0.6"
+                  image_pull_policy            = "Always"
+                  vol_mount_conf               = false
+                  volume_mounts_config         = [{}]
+                  env_config                   = true
                   environment_variables_config = [
                     {
                       name  = "BIND_ADDRESS"
@@ -276,7 +276,7 @@ variable "service_variables" {
                   volume_mounts_config         = [{}]
                   env_config                   = false
                   environment_variables_config = [{}]
-                  container_ports_config = [
+                  container_ports_config       = [
                     {
                       port     = 5775
                       name     = "zk-compact-trft"
@@ -318,16 +318,16 @@ variable "service_variables" {
       }
     }
     product-api = {
-      has_empty_dir = false
-      has_cm = true
-      has_vol = true
+      has_empty_dir  = false
+      has_cm         = true
+      has_vol        = true
       ServiceAccount = {
         sa_name                         = "product-api"
         automount_service_account_token = true
       }
       Service = {
         spec_type = ""
-        ports = [
+        ports     = [
           {
             pname     = "http"
             pprotocol = "TCP"
@@ -350,7 +350,7 @@ variable "service_variables" {
       }
       Deployment = {
         spec_config = {
-          replica_count = 1
+          replica_count   = 1
           selector_config = {
             labels = {
               app = "product-api"
@@ -361,7 +361,7 @@ variable "service_variables" {
               labels = {
                 app = "product-api"
               }
-              prometheus = true
+              prometheus  = true
               annotations = {
                 "consul.hashicorp.com/connect-service-upstreams" = "postgres:5432"
               }
@@ -369,7 +369,7 @@ variable "service_variables" {
             template_spec_config = {
               volumes_config = [
                 {
-                  volume_name = "config"
+                  volume_name        = "config"
                   config_maps_config = [
                     {
                       config_map_name = "db-configmap"
@@ -381,10 +381,10 @@ variable "service_variables" {
               ]
               container_config = [
                 {
-                  container_name    = "product-api"
-                  container_image   = "hashicorpdemoapp/product-api:v0.0.20"
-                  image_pull_policy = "Always"
-                  vol_mount_conf    = true
+                  container_name       = "product-api"
+                  container_image      = "hashicorpdemoapp/product-api:v0.0.20"
+                  image_pull_policy    = "Always"
+                  vol_mount_conf       = true
                   volume_mounts_config = [
                     {
                       mount_path        = "/config"
@@ -392,7 +392,7 @@ variable "service_variables" {
                       read_only         = true
                     }
                   ]
-                  env_config = true
+                  env_config                   = true
                   environment_variables_config = [
                     {
                       name  = "CONFIG_FILE"
@@ -409,15 +409,17 @@ variable "service_variables" {
                   ]
                   container_args_config = []
                   liveness              = true
-                  liveness_probe_config = [{
-                    method                = "httpGet"
-                    path                  = "/health"
-                    port                  = 9090
-                    initial_delay_seconds = 15
-                    timeout_seconds       = 1
-                    period_seconds        = 10
-                    failure_threshold     = 30
-                  }]
+                  liveness_probe_config = [
+                    {
+                      method                = "httpGet"
+                      path                  = "/health"
+                      port                  = 9090
+                      initial_delay_seconds = 15
+                      timeout_seconds       = 1
+                      period_seconds        = 10
+                      failure_threshold     = 30
+                    }
+                  ]
                 }
               ]
             }
@@ -426,16 +428,16 @@ variable "service_variables" {
       }
     }
     postgres = {
-      has_cm = false
-      has_vol = true
-      has_empty_dir = true
+      has_cm         = false
+      has_vol        = true
+      has_empty_dir  = true
       ServiceAccount = {
         sa_name                         = "postgres"
         automount_service_account_token = true
       }
       Service = {
         spec_type = "ClusterIP"
-        ports = [
+        ports     = [
           {
             ptarget = 5432
             pport   = 5432
@@ -450,7 +452,7 @@ variable "service_variables" {
       }
       Deployment = {
         spec_config = {
-          replica_count = 1
+          replica_count   = 1
           selector_config = {
             labels = {
               app     = "postgres"
@@ -469,16 +471,16 @@ variable "service_variables" {
             template_spec_config = {
               volumes_config = [
                 {
-                  volume_name = "pgdata"
+                  volume_name        = "pgdata"
                   config_maps_config = [{}]
                 }
               ]
               container_config = [
                 {
-                  container_name    = "postgres"
-                  container_image   = "hashicorpdemoapp/product-api-db:v0.0.20"
-                  image_pull_policy = "Always"
-                  vol_mount_conf    = true
+                  container_name       = "postgres"
+                  container_image      = "hashicorpdemoapp/product-api-db:v0.0.20"
+                  image_pull_policy    = "Always"
+                  vol_mount_conf       = true
                   volume_mounts_config = [
                     {
                       mount_path        = "/var/lib/postgresql/data"
@@ -486,7 +488,7 @@ variable "service_variables" {
                       read_only         = false
                     }
                   ]
-                  env_config = true
+                  env_config                   = true
                   environment_variables_config = [
                     {
                       name  = "POSTGRES_DB"
@@ -517,16 +519,16 @@ variable "service_variables" {
       }
     }
     frontend = {
-      has_cm = false
-      has_vol = false
-      has_empty_dir = false
+      has_cm         = false
+      has_vol        = false
+      has_empty_dir  = false
       ServiceAccount = {
         sa_name                         = "frontend"
         automount_service_account_token = true
       }
       Service = {
         spec_type = "ClusterIP"
-        ports = [
+        ports     = [
           {
             ptarget = 3000
             pport   = 3000
@@ -541,7 +543,7 @@ variable "service_variables" {
       }
       Deployment = {
         spec_config = {
-          replica_count = 1
+          replica_count   = 1
           selector_config = {
             labels = {
               app     = "frontend"
@@ -558,15 +560,15 @@ variable "service_variables" {
               annotations = {}
             }
             template_spec_config = {
-              volumes_config = [{}]
+              volumes_config   = [{}]
               container_config = [
                 {
-                  container_name       = "frontend"
-                  container_image      = "hashicorpdemoapp/frontend:v1.0.1"
-                  image_pull_policy    = "Always"
-                  vol_mount_conf       = false
-                  volume_mounts_config = [{}]
-                  env_config           = true
+                  container_name               = "frontend"
+                  container_image              = "hashicorpdemoapp/frontend:v1.0.1"
+                  image_pull_policy            = "Always"
+                  vol_mount_conf               = false
+                  volume_mounts_config         = [{}]
+                  env_config                   = true
                   environment_variables_config = [
                     {
                       name  = "NEXT_PUBLIC_PUBLIC_API_URL"
@@ -588,9 +590,191 @@ variable "service_variables" {
         }
       }
     }
+  # TODO intentionally commented out, this will allow access to hashicups without a port forward.
+#    nginx = {
+#      has_cm         = false
+#      has_vol        = false
+#      has_empty_dir  = false
+#      ServiceAccount = {
+#        sa_name                         = "nginx"
+#        automount_service_account_token = true
+#      }
+#      Service = {
+#        spec_type = "ClusterIP"
+#        ports     = [
+#          {
+#            ptarget = 80
+#            pport   = 80
+#          }
+#        ]
+#      }
+#      ConfigMap = {
+#        cm_name = "nginx-config"
+#        cm_data = {
+#          "nginx.conf" = <<EOF
+#            events {}
+#            http {
+#              include /etc/nginx/conf.d/*.conf;
+#              server {
+#                server_name localhost;
+#                listen 80 default_server;
+#                proxy_http_version 1.1;
+#                proxy_set_header Upgrade $http_upgrade;
+#                proxy_set_header Connection 'upgrade';
+#                proxy_set_header Host $host;
+#                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#                proxy_temp_file_write_size 64k;
+#                proxy_connect_timeout 10080s;
+#                proxy_send_timeout 10080;
+#                proxy_read_timeout 10080;
+#                proxy_buffer_size 64k;
+#                proxy_buffers 16 32k;
+#                proxy_busy_buffers_size 64k;
+#                proxy_redirect off;
+#                proxy_request_buffering off;
+#                proxy_buffering off;
+#                location / {
+#                  proxy_pass http://127.0.0.1:3000;
+#                }
+#                location /static {
+#                  proxy_cache_valid 60m;
+#                  proxy_pass http://127.0.0.1:3000;
+#                }
+#                location /api {
+#                  proxy_pass http://127.0.0.1:8080;
+#                }
+#                error_page   500 502 503 504  /50x.html;
+#                location = /50x.html {
+#                    root   /usr/share/nginx/html;
+#                    }
+#                  }
+#                }
+#                EOF
+#          Deployment   = {
+#            spec_config = {
+#              replica_count   = 1
+#              selector_config = {
+#                labels = {
+#                  app     = "frontend"
+#                  service = "frontend"
+#                }
+#              }
+#              template_config = {
+#                metadata_config = {
+#                  labels = {
+#                    app     = "frontend"
+#                    service = "frontend"
+#                  }
+#                  prometheus  = false
+#                  annotations = {}
+#                }
+#                template_spec_config = {
+#                  volumes_config   = [{}]
+#                  container_config = [
+#                    {
+#                      container_name               = "frontend"
+#                      container_image              = "hashicorpdemoapp/frontend:v1.0.1"
+#                      image_pull_policy            = "Always"
+#                      vol_mount_conf               = false
+#                      volume_mounts_config         = [{}]
+#                      env_config                   = true
+#                      environment_variables_config = [
+#                        {
+#                          name  = "NEXT_PUBLIC_PUBLIC_API_URL"
+#                          value = "http://localhost:8080"
+#                        }
+#                      ]
+#                      container_ports_config = [
+#                        {
+#                          port = 3000
+#                        }
+#                      ]
+#                      container_args_config = []
+#                      liveness              = false
+#                      liveness_probe_config = [{}]
+#                    }
+#                  ]
+#                }
+#              }
+#            }
+#          }
+#        }
+#      }
+#    }
+#    ingress = {
+#      has_cm         = false
+#      has_vol        = false
+#      has_empty_dir  = false
+#      ServiceAccount = {
+#        sa_name                         = "frontend"
+#        automount_service_account_token = true
+#      }
+#      Service = {
+#        spec_type = "ClusterIP"
+#        ports     = [
+#          {
+#            ptarget = 3000
+#            pport   = 3000
+#          }
+#        ]
+#      }
+#      ConfigMap = {
+#        cm_name = null
+#        cm_data = {
+#          config = null
+#        }
+#      }
+#      Deployment = {
+#        spec_config = {
+#          replica_count   = 1
+#          selector_config = {
+#            labels = {
+#              app     = "frontend"
+#              service = "frontend"
+#            }
+#          }
+#          template_config = {
+#            metadata_config = {
+#              labels = {
+#                app     = "frontend"
+#                service = "frontend"
+#              }
+#              prometheus  = false
+#              annotations = {}
+#            }
+#            template_spec_config = {
+#              volumes_config   = [{}]
+#              container_config = [
+#                {
+#                  container_name               = "frontend"
+#                  container_image              = "hashicorpdemoapp/frontend:v1.0.1"
+#                  image_pull_policy            = "Always"
+#                  vol_mount_conf               = false
+#                  volume_mounts_config         = [{}]
+#                  env_config                   = true
+#                  environment_variables_config = [
+#                    {
+#                      name  = "NEXT_PUBLIC_PUBLIC_API_URL"
+#                      value = "http://localhost:8080"
+#                    }
+#                  ]
+#                  container_ports_config = [
+#                    {
+#                      port = 3000
+#                    }
+#                  ]
+#                  container_args_config = []
+#                  liveness              = false
+#                  liveness_probe_config = [{}]
+#                }
+#              ]
+#            }
+#          }
+#        }
+#      }
+#    }
   }
 }
-
 
 variable "consul_kube_api_creds" {
   default = {
@@ -710,6 +894,8 @@ variable "custom_resource_definitions_config" {
           "protocol" = "http"
         }
       }
+#      nginx = {}
+#      ingress = {}
     }
   }
 }
