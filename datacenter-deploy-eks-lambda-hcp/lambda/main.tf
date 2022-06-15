@@ -41,5 +41,4 @@ module "lambda-registration" {
   subnet_ids                = var.lambda_config.private_subnets
   security_group_ids        = var.lambda_config.security_groups
   sync_frequency_in_minutes = 2
-
 }

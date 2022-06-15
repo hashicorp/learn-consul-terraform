@@ -12,7 +12,6 @@ data "archive_file" "lambda_payments" {
 
 }
 
-
 resource "aws_lambda_function" "lambda-payments" {
   filename         = local.lambda_payments_path
   source_code_hash = filebase64sha256(local.lambda_payments_path)
