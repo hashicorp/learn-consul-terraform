@@ -71,6 +71,8 @@ module "lambda-registration" {
   subnet_ids                = module.vpc.private_subnets
   security_group_ids        = [module.vpc.default_security_group_id]
   sync_frequency_in_minutes = 1
+
+  consul_http_token_path = aws_ssm_parameter.token.name
 }
 
 # Step 3: Deploy a Lambda function for Hashicups payments

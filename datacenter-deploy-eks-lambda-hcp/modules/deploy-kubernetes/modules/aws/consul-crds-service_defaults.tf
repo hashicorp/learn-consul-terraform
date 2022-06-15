@@ -1,6 +1,5 @@
-
 resource "kubectl_manifest" "hashicups_service_defaults" {
-  for_each = var.custom_resource_definitions_config.ServiceDefaults
+  for_each  = var.custom_resource_definitions_config.ServiceDefaults
   yaml_body = <<YAML
 apiVersion: ${var.consul_kube_api_creds.ServiceDefaults.apiVersion}
 kind: ServiceDefaults
@@ -12,11 +11,13 @@ spec:
 YAML
 
   provisioner "local-exec" {
-    when = destroy
-    command =  "bash ${path.module}/cleanup.sh \"${each.key}\" servicedefaults"
+    when    = destroy
+    command = "bash ${path.module}/cleanup.sh"
     #command =  "kubectl patch servicedefaults ${each.key} -p '{\"metadata\":{\"finalizers\":[]}}' --type=merge && kubectl delete servicedefaults ${each.key} --ignore-not-found=true"
-
+    environment = {
+      SERVICETYPE = "servicedefaults"
+      SERVICENAME = each.key
+    }
   }
   depends_on = [helm_release.consul_enterprise]
 }
-

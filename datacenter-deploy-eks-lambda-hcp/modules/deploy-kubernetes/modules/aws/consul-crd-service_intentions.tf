@@ -18,11 +18,14 @@ spec:
 
   YAML
 
-
   provisioner "local-exec" {
     # Part of the pre-reqs involve using kubectl, so this is not optimal, but okay given the environment
     when    = destroy
-    command = "bash ${path.module}/cleanup.sh \"${each.key}\" serviceintentions"
+    command = "bash ${path.module}/cleanup.sh"
+    environment = {
+      SERVICETYPE = "serviceintentions"
+      SERVICENAME = each.key
+    }
   }
   depends_on = [helm_release.consul_enterprise]
 }
