@@ -33,7 +33,6 @@ data "aws_caller_identity" "current" {}
 #   tier  = "Advanced"
 # }
 
-
 # module "lambda-registration" {
 #   source                    = "hashicorp/consul-lambda-registrator/aws//modules/lambda-registrator"
 #   version                   = "0.1.0-alpha2"

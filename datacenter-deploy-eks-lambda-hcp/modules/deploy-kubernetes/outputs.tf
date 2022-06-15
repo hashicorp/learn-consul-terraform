@@ -5,7 +5,7 @@ output "consul_values" {
     root_token      = module.hcp-tutorial-deployment.consul_bootstrap_token
     endpoint        = module.hcp-tutorial-deployment.hcp_consul_endpoint
     public_endpoint = module.hcp-tutorial-deployment.hcp_consul_public_endpoint
-    kube            = module.aws-tutorial-deployment.kubernetes_control_plane
+    # kube            = module.aws-tutorial-deployment.kubernetes_control_plane
   }
   sensitive = true
 }

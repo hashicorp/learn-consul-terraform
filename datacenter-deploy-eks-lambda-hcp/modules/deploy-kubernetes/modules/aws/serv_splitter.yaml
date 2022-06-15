@@ -5,7 +5,7 @@ metadata:
 spec:
   splits:
     - weight: 100
-      service: payments-lambda2
+      service: payments-lambda
       responseHeaders:
         set:
           x-web-version: lambda
