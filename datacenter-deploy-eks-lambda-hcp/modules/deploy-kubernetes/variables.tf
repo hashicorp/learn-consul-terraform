@@ -58,9 +58,9 @@ variable "tutorial_config" {
     public_subnets              = list(string)
     security_group_ids          = list(string)
     vpc_id                      = string
-    consul_enterprise_license   = string
-    aws_region                  = string
-    identifier                  = string
+    # consul_enterprise_license   = string
+    aws_region = string
+    identifier = string
   })
   description = "Object definition for tutorial config passed downstream to modules"
 }
@@ -76,4 +76,9 @@ variable "consul_cluster_datacenter" {
   type        = string
   description = "Datacenter name"
   default     = "dc1"
+}
+
+variable "lambda_payments_path" {
+  type        = string
+  description = "Path to the HashiCups payments zip file for lambda"
 }

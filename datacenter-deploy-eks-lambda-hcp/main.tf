@@ -14,12 +14,13 @@ module "vpc" {
 }
 
 module "tutorial_infrastructure" {
-  source          = "./modules/deploy-kubernetes"
-  tutorial_config = local.tutorial_config
+  source               = "./modules/deploy-kubernetes"
+  tutorial_config      = local.tutorial_config
+  lambda_payments_path = "${path.module}/lambda-payments.zip"
 }
 
 output "consul_values" {
-  value = module.tutorial_infrastructure.consul_values
+  value     = module.tutorial_infrastructure.consul_values
   sensitive = true
 }
 

@@ -4,7 +4,7 @@ output "consul_values" {
     gossip     = module.hcp-tutorial-deployment.consul_gossip_key
     root_token = module.hcp-tutorial-deployment.consul_bootstrap_token
     endpoint   = module.hcp-tutorial-deployment.hcp_consul_endpoint
-    kube       = module.eks-tutorial-deployment.kubernetes_control_plane
+    kube       = module.aws-tutorial-deployment.kubernetes_control_plane
   }
   sensitive = true
 }

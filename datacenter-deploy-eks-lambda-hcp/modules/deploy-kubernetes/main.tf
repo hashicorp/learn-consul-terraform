@@ -1,6 +1,7 @@
-module "eks-tutorial-deployment" {
-  source     = "./modules/eks"
-  eks_config = local.eks_config
+module "aws-tutorial-deployment" {
+  source               = "./modules/aws"
+  aws_config           = local.aws_config
+  lambda_payments_path = var.lambda_payments_path
 }
 
 module "hcp-tutorial-deployment" {
