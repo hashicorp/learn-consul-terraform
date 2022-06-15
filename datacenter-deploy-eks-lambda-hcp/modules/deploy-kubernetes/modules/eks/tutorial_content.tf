@@ -33,18 +33,29 @@ resource "aws_ssm_parameter" "ca_cert" {
   tier = "Advanced"
 }
 
+resource "aws_ssm_parameter" "token" {
+  name = "/${var.lambda_name}/token"
+  type = "SecureString"
+  value = var.eks_config.consul_bootstrap_token_b64
+  tier = "Advanced"
+}
+
+data "aws_ecr_repository" "service" {
+  name =aws_ecr_repository.lambda-registrator.name
+  depends_on = [null_resource.push-lambda-registrator-to-ecr]
+}
 
 module "lambda-registration" {
   source                    = "hashicorp/consul-lambda-registrator/aws//modules/lambda-registrator"
   version                   = "0.1.0-alpha2"
-  name                      = var.ecr_config.ecr_repository_name
+  name                      = data.aws_ecr_repository.service.name #var.ecr_config.ecr_repository_name
   consul_http_addr          = var.eks_config.hcp_consul_endpoint#var.lambda_config.kubernetes_control_plane
-  consul_ca_cert_path       = aws_ssm_parameter.ca_cert.name
+  #consul_ca_cert_path       = aws_ssm_parameter.ca_cert.name
   ecr_image_uri             = "${aws_ecr_repository.lambda-registrator.repository_url}:${var.ecr_config.ecr_image_tag}"
   subnet_ids                = var.eks_config.private_subnets
   security_group_ids        = var.eks_config.security_group_ids
   sync_frequency_in_minutes = 2
-
+  consul_http_token_path = aws_ssm_parameter.token.name
 }
 
 variable "lambda_name" {
