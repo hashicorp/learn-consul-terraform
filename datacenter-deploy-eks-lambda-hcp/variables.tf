@@ -36,15 +36,9 @@ variable "cluster_networking" {
 
 variable "cluster_definitions" {
   description = "Cluster definitions for EKS"
-  type = map(any)
+  type        = map(any)
   default = {
 
-    name = "eksLambConsul"
+    name = "learn-consul-lambda"
   }
-}
-
-variable "consul_enterprise_license_filename" {
-  type = string
-  description = "Consul Enterprise license for Kubernetes Consul instance"
-  default = "./consul.hclic"
 }

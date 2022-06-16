@@ -15,6 +15,10 @@ output "hcp_consul_endpoint" {
   value = hcp_consul_cluster.server.consul_private_endpoint_url
 }
 
+output "hcp_consul_public_endpoint" {
+  value = hcp_consul_cluster.server.consul_public_endpoint_url
+}
+
 output "consul_gossip_key" {
   value = local.gossip_key
 }

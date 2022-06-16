@@ -20,9 +20,9 @@ locals {
     public_subnets              = module.vpc.public_subnets
     security_group_ids          = [module.vpc.default_security_group_id]
     vpc_id                      = module.vpc.vpc_id
-    consul_enterprise_license   = file(var.consul_enterprise_license_filename)
-    aws_region                  = var.aws_region
-    identifier                  = random_id.tutorial.b64_url
+    # consul_enterprise_license   = file(var.consul_enterprise_license_filename)
+    aws_region = var.aws_region
+    identifier = random_id.tutorial.b64_url
   }
 }
 

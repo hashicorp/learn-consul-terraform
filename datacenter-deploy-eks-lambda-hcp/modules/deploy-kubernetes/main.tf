@@ -1,6 +1,8 @@
-module "eks-tutorial-deployment" {
-  source     = "./modules/eks"
-  eks_config = local.eks_config
+module "aws-tutorial-deployment" {
+  source               = "./modules/aws"
+  aws_config           = local.aws_config
+  lambda_payments_path = var.lambda_payments_path
+  cluster_name         = "learn-consul-lambda"
 }
 
 module "hcp-tutorial-deployment" {

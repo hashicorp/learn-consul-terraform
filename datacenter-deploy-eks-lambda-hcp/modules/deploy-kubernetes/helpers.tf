@@ -1,10 +1,10 @@
 locals {
-  eks_config = {
-    private_subnets            = var.tutorial_config.private_subnets
-    public_subnets             = var.tutorial_config.public_subnets
-    security_group_ids         = var.tutorial_config.security_group_ids
-    vpc_id                     = var.tutorial_config.vpc_id
-    consul_ent_license_b64     = var.tutorial_config.consul_enterprise_license
+  aws_config = {
+    private_subnets    = var.tutorial_config.private_subnets
+    public_subnets     = var.tutorial_config.public_subnets
+    security_group_ids = var.tutorial_config.security_group_ids
+    vpc_id             = var.tutorial_config.vpc_id
+    # consul_ent_license_b64     = var.tutorial_config.consul_enterprise_license
     consul_bootstrap_token_b64 = module.hcp-tutorial-deployment.consul_bootstrap_token
     consul_ca_certificate_b64  = module.hcp-tutorial-deployment.ca_certificate_file
     consul_gossip_key_b64      = module.hcp-tutorial-deployment.consul_gossip_key
@@ -26,7 +26,7 @@ locals {
   lambda_config = {
     aws_account_id           = var.tutorial_config.aws_account_id
     consul_ca_cert           = module.hcp-tutorial-deployment.ca_certificate_file
-    kubernetes_control_plane = module.eks-tutorial-deployment.kubernetes_control_plane
+    kubernetes_control_plane = module.aws-tutorial-deployment.kubernetes_control_plane
     private_subnets          = var.tutorial_config.private_subnets
     region                   = var.tutorial_config.aws_region
     security_groups          = var.tutorial_config.security_group_ids
