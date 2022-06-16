@@ -1,25 +1,26 @@
-variable "aws_region" {
-  type        = string
-  description = "AWS region to deploy terraform resources"
-  default     = "us-east-1"
-}
+#variable "aws_region" {
+#  type        = string
+#  description = "AWS region to deploy terraform resources"
+#  default     = "us-east-1"
+#}
 
-variable "hvn_settings" {
-  type        = any
-  description = "Settings for the HCP HVN"
-  default = {
-    name = {
-      main-hvn = "main-hvn"
-    }
-    cloud_provider = {
-      aws = "aws"
-    }
-    region = {
-      us-east-1 = "us-east-1"
-    }
-    cidr_block = "172.25.16.0/20"
-  }
-}
+#variable "hvn_settings" {
+#  type        = any
+#  description = "Settings for the HCP HVN"
+#  default = {
+#    name = {
+#      main-hvn = "main-hvn"
+#    }
+##    cloud_provider = {
+##      aws = "aws"
+##    }
+##    region = {
+##      us-east-1 = "us-east-1"
+##
+##    }
+#    cidr_block = "172.25.16.0/20"
+#  }
+#}
 
 variable "cluster_networking" {
   type        = any
@@ -58,25 +59,27 @@ variable "tutorial_config" {
     public_subnets              = list(string)
     security_group_ids          = list(string)
     vpc_id                      = string
-    # consul_enterprise_license   = string
-    aws_region = string
-    identifier = string
+    aws_region                  = string
+    identifier                  = string
+    consul_datacenter           = string
+    hcp_cloud_provider          = string
+    hcp_consul_tier             = string
   })
   description = "Object definition for tutorial config passed downstream to modules"
 }
 
 
-variable "hcp_cloud_provider" {
-  type        = string
-  description = "Cloud Provider for HCP"
-  default     = "aws"
-}
+#variable "hcp_cloud_provider" {
+#  type        = string
+#  description = "Cloud Provider for HCP"
+#  default     = "aws"
+#}
 
-variable "consul_cluster_datacenter" {
-  type        = string
-  description = "Datacenter name"
-  default     = "dc1"
-}
+#variable "consul_cluster_datacenter" {
+#  type        = string
+#  description = "Datacenter name"
+#  default     = "dc1"
+#}
 
 variable "lambda_payments_path" {
   type        = string

@@ -1,28 +1,28 @@
-variable "cloud_provider" {
-  type        = string
-  description = "Cloud Provider for HCP"
-  default     = "aws"
-}
+#variable "cloud_provider" {
+#  type        = string
+#  description = "Cloud Provider for HCP"
+#  default     = "aws"
+#}
 
 variable "hvn_name" {
   default = "lambdaConsul"
 }
 
-variable "hcp_region" {
-  default = "us-east-1"
-}
+#variable "hcp_region" {
+#  default = "us-east-1"
+#}
 
 variable "hcp_hvn_cidr_block" {
   type        = string
   description = "CIDR block for HCP"
-  default     = "172.25.0.0/16"
+  default     = "172.25.16.0/20"
 }
 
-variable "consul_cluster_datacenter" {
-  type        = string
-  description = "Consul cluster datacenter"
-  default     = "dc1"
-}
+#variable "consul_cluster_datacenter" {
+#  type        = string
+#  description = "Consul cluster datacenter"
+#  default     = "dc1"
+#}
 
 variable "hvn_peering_identifier" {
   default = "lambdaConsul"
@@ -33,11 +33,11 @@ variable "consul_public_endpoint" {
   default = true
 }
 
-variable "hcp_consul_tier" {
-  type        = string
-  description = "Pricing tier for HCP Consul"
-  default     = "development"
-}
+#variable "hcp_consul_tier" {
+#  type        = string
+#  description = "Pricing tier for HCP Consul"
+#  default     = "development"
+#}
 
 variable "hcp_config" {
   type = object({
@@ -49,5 +49,9 @@ variable "hcp_config" {
     private_route_table_ids    = list(string)
     public_route_table_ids     = list(string)
     identifier                 = string
+    hcp_cloud_provider         = string
+    consul_datacenter          = string
+    hcp_consul_tier            = string
+
   })
 }

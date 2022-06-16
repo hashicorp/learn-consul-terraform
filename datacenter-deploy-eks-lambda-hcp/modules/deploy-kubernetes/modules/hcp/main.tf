@@ -1,18 +1,18 @@
 # The HCP HVN Resource. Hosts the HCP Vault and Cluster instances
 resource "hcp_hvn" "server" {
-  cloud_provider = var.cloud_provider
+  cloud_provider = var.hcp_config.hcp_cloud_provider
   hvn_id         = local.unique_hvn
-  region         = var.hcp_region
+  region         = var.hcp_config.aws_region
   cidr_block     = var.hcp_hvn_cidr_block
 }
 
 # Creates the HCP Consul Server instance
 resource "hcp_consul_cluster" "server" {
   # When datacenter variable is not passed to this resource, the consul datacenter name is the value of required variable `cluster_id`
-  cluster_id      = local.unique_consul_dc
+  cluster_id      = var.hcp_config.consul_datacenter
   hvn_id          = hcp_hvn.server.hvn_id
   public_endpoint = var.consul_public_endpoint
-  tier            = var.hcp_consul_tier
+  tier            = var.hcp_config.hcp_consul_tier
   connect_enabled = true
 }
 
@@ -66,7 +66,7 @@ resource "aws_route" "peering-public" {
 # Creates the root Consul token for the working environment
 resource "hcp_consul_cluster_root_token" "user" {
   depends_on = [hcp_consul_cluster.server]
-  cluster_id = local.unique_consul_dc
+  cluster_id = var.hcp_config.consul_datacenter
 }
 
 # Security Group created for the AWS VPC. This eventually holds the settings for peering between HCP and AWS.

@@ -11,21 +11,12 @@ spec:
 YAML
 
   provisioner "local-exec" {
-<<<<<<< HEAD:datacenter-deploy-eks-lambda-hcp/modules/deploy-kubernetes/modules/eks/consul-crds-service_defaults.tf
-    when = destroy
-    command =  "bash ${path.module}/cleanup.sh"
-    #command =  "kubectl patch servicedefaults ${each.key} -p '{\"metadata\":{\"finalizers\":[]}}' --type=merge && kubectl delete servicedefaults ${each.key} --ignore-not-found=true"
-    environment = {
-      SERVICETYPE="servicedefaults"
-      SERVICENAME=each.key
-=======
     when    = destroy
     command = "bash ${path.module}/cleanup.sh"
     #command =  "kubectl patch servicedefaults ${each.key} -p '{\"metadata\":{\"finalizers\":[]}}' --type=merge && kubectl delete servicedefaults ${each.key} --ignore-not-found=true"
     environment = {
       SERVICETYPE = "servicedefaults"
       SERVICENAME = each.key
->>>>>>> origin/im2nguyen/serverless-consul-lambda-function:datacenter-deploy-eks-lambda-hcp/modules/deploy-kubernetes/modules/aws/consul-crds-service_defaults.tf
     }
   }
   depends_on = [helm_release.consul_enterprise]

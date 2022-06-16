@@ -23,13 +23,8 @@ spec:
     when    = destroy
     command = "bash ${path.module}/cleanup.sh"
     environment = {
-<<<<<<< HEAD:datacenter-deploy-eks-lambda-hcp/modules/deploy-kubernetes/modules/eks/consul-crd-service_intentions.tf
-      SERVICETYPE="serviceintentions"
-      SERVICENAME=each.key
-=======
       SERVICETYPE = "serviceintentions"
       SERVICENAME = each.key
->>>>>>> origin/im2nguyen/serverless-consul-lambda-function:datacenter-deploy-eks-lambda-hcp/modules/deploy-kubernetes/modules/aws/consul-crd-service_intentions.tf
     }
   }
   depends_on = [helm_release.consul_enterprise]

@@ -1,5 +1,5 @@
 locals {
-  cluster_name = "${var.cluster_name}-${var.eks_config.identifier}"
+  cluster_name = "${var.cluster_name}-${var.aws_config.identifier}"
 }
 
 # Deploys Amazon EKS

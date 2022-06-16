@@ -13,6 +13,6 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region = var.tutorial_config.aws_region
 }
 
