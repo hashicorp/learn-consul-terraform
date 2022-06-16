@@ -17,6 +17,7 @@ module "tutorial_infrastructure" {
   source               = "./modules/deploy-kubernetes"
   tutorial_config      = local.tutorial_config
   lambda_payments_path = "${path.module}/lambda-payments.zip"
+  eks_lambda_iam_arn   = aws_iam_role.eks_lambda.arn
 }
 
 # Step 2: Register Lambda functions inside the Consul cluster
@@ -235,3 +236,61 @@ resource "aws_iam_role_policy_attachment" "lambda_payments" {
 # #  role       = aws_iam_role.lambda_payments.name
 # #  policy_arn = aws_iam_policy.lambda_payments.arn
 # #}
+
+
+resource "aws_iam_policy" "eks_lambda" {
+  name        = "eks-lambda-policy"
+  path        = "/"
+  description = "IAM policy for EKS and lambda"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Invoke",
+      "Action": [
+        "lambda:InvokeFunction"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+data "aws_iam_policy_document" "eks_pods" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    effect  = "Allow"
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(module.tutorial_infrastructure.eks_cluster_oidc_issuer_url, "https://", "")}:sub"
+      values = [
+        "system:serviceaccount:default:frontend",
+        "system:serviceaccount:default:payments",
+        "system:serviceaccount:default:postgres",
+        "system:serviceaccount:default:product-api",
+        "system:serviceaccount:default:public-api",
+        "system:serviceaccount:default:consul-terminating-gateway"
+      ]
+    }
+
+    principals {
+      identifiers = [module.tutorial_infrastructure.eks_oidc_provider_arn]
+      type        = "Federated"
+    }
+  }
+}
+
+resource "aws_iam_role" "eks_lambda" {
+  name               = "eks-lambda-role"
+  assume_role_policy = data.aws_iam_policy_document.eks_pods.json
+}
+
+resource "aws_iam_role_policy_attachment" "eks_lambda" {
+  role       = aws_iam_role.eks_lambda.name
+  policy_arn = aws_iam_policy.eks_lambda.arn
+}

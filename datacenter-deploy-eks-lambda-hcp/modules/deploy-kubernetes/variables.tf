@@ -82,3 +82,8 @@ variable "lambda_payments_path" {
   type        = string
   description = "Path to the HashiCups payments zip file for lambda"
 }
+
+variable "eks_lambda_iam_arn" {
+  type        = string
+  description = "AWS IAM ARN that lets EKS service account connect to lambda"
+}

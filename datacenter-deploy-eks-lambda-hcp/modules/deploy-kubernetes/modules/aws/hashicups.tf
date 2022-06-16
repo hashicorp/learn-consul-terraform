@@ -1,12 +1,14 @@
 locals {
   shared_annotations_with_prometheus = merge(var.shared_annnotations, var.shared_annotations_prometheus)
-
 }
 
 resource "kubernetes_service_account" "hashicups_service_accounts" {
   for_each = var.service_variables
   metadata {
     name = each.value.ServiceAccount.sa_name
+    annotations = {
+      "eks.amazonaws.com/role-arn" = var.eks_lambda_iam_arn
+    }
   }
   automount_service_account_token = each.value.ServiceAccount.automount_service_account_token
   # Ensures the resources which are dependent on this resource will be created after Consul
@@ -67,12 +69,12 @@ resource "kubernetes_deployment" "kubernetes_deployments" {
         service_account_name = each.key
         dynamic "volume" {
           for_each = [for vol in each.value.Deployment.spec_config.template_config.template_spec_config.volumes_config : vol
-                      if each.value.has_vol == true && each.value.has_empty_dir == true ]
+          if each.value.has_vol == true && each.value.has_empty_dir == true]
           content {
             name = volume.value.volume_name
             dynamic "config_map" {
-              for_each = [ for vl in volume.value.config_maps_config : vl
-                           if each.value.has_cm == true ]
+              for_each = [for vl in volume.value.config_maps_config : vl
+              if each.value.has_cm == true]
               content {
                 name = config_map.value.config_map_name
                 items {
@@ -87,13 +89,13 @@ resource "kubernetes_deployment" "kubernetes_deployments" {
 
         dynamic "volume" {
           for_each = [for vol in each.value.Deployment.spec_config.template_config.template_spec_config.volumes_config : vol
-                      if each.value.has_vol == true && each.value.has_empty_dir == false ]
+          if each.value.has_vol == true && each.value.has_empty_dir == false]
           content {
             name = volume.value.volume_name
             dynamic "config_map" {
               for_each = [
-              for vl in volume.value.config_maps_config : vl
-              if each.value.has_cm == true
+                for vl in volume.value.config_maps_config : vl
+                if each.value.has_cm == true
               ]
               content {
                 name = config_map.value.config_map_name
@@ -110,8 +112,8 @@ resource "kubernetes_deployment" "kubernetes_deployments" {
         dynamic "container" {
           for_each = each.value.Deployment.spec_config.template_config.template_spec_config.container_config
           content {
-            name = container.value.container_name
-            image = container.value.container_image
+            name              = container.value.container_name
+            image             = container.value.container_image
             image_pull_policy = container.value.image_pull_policy
             dynamic "volume_mount" {
               for_each = [for vmc in container.value.volume_mounts_config : vmc

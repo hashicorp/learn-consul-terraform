@@ -24,3 +24,13 @@ output "kubernetes_control_plane" {
   description = "EKS control plane"
   value       = module.aws-tutorial-deployment.kubernetes_control_plane
 }
+
+output "eks_oidc_provider_arn" {
+  description = "EKS OIDC Provider ARN"
+  value       = module.aws-tutorial-deployment.eks_oidc_provider_arn
+}
+
+output "eks_cluster_oidc_issuer_url" {
+  description = "EKS OIDC URL"
+  value       = module.aws-tutorial-deployment.eks_cluster_oidc_issuer_url
+}

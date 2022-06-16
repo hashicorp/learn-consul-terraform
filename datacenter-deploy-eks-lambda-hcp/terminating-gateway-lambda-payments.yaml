@@ -2,6 +2,9 @@ apiVersion: consul.hashicorp.com/v1alpha1
 kind: TerminatingGateway
 metadata:
   name: payments-lambda-gateway
+  # annotations:
+  #   eks.amazonaws.com/role-arn: arn:aws:iam::561656980159:role/eks-lambda-role
 spec:
   services:
     - name: payments-lambda
+# kubectl annotate serviceaccount -n default consul-terminating-gateway eks.amazonaws.com/role-arn="arn:aws:iam::561656980159:role/eks-lambda-roleeks.amazonaws.com/role-arn: arn:aws:iam::561656980159:role/eks-lambda-role"
