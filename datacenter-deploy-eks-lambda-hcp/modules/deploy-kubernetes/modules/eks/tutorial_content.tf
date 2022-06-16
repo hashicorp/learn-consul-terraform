@@ -5,6 +5,11 @@ resource "aws_ecr_repository" "lambda-registrator" {
   name = var.ecr_config.ecr_repository_name
 }
 
+locals {
+  unique_lambda = "${var.lambda_name}-${var.eks_config.identifier}"
+  unique_registrator = "${data.aws_ecr_repository.service.name}-${var.eks_config.identifier}"
+}
+
 
 # Push to ECR
 resource "null_resource" "push-lambda-registrator-to-ecr" {
@@ -48,9 +53,8 @@ data "aws_ecr_repository" "service" {
 module "lambda-registration" {
   source                    = "hashicorp/consul-lambda-registrator/aws//modules/lambda-registrator"
   version                   = "0.1.0-alpha2"
-  name                      = data.aws_ecr_repository.service.name #var.ecr_config.ecr_repository_name
-  consul_http_addr          = var.eks_config.hcp_consul_endpoint#var.lambda_config.kubernetes_control_plane
-  #consul_ca_cert_path       = aws_ssm_parameter.ca_cert.name
+  name                      = local.unique_registrator #data.aws_ecr_repository.service.name
+  consul_http_addr          = var.eks_config.hcp_consul_endpoint
   ecr_image_uri             = "${aws_ecr_repository.lambda-registrator.repository_url}:${var.ecr_config.ecr_image_tag}"
   subnet_ids                = var.eks_config.private_subnets
   security_group_ids        = var.eks_config.security_group_ids
@@ -111,7 +115,7 @@ locals {
 resource "aws_lambda_function" "lambda-payments" {
   filename         = local.lambda_payments_path
   source_code_hash = filebase64sha256(local.lambda_payments_path)
-  function_name    = "payments-lambda2"
+  function_name    = local.unique_lambda#"payments-lambda2"
   role             = aws_iam_role.lambda_payments.arn
   handler          = "lambda-payments"
   runtime          = "go1.x"

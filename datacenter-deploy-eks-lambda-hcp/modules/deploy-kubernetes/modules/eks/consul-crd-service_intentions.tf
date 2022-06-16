@@ -18,9 +18,6 @@ spec:
 
   YAML
 
-  triggers = {
-
-  }
   provisioner "local-exec" {
     # Part of the pre-reqs involve using kubectl, so this is not optimal, but okay given the environment
     when    = destroy
