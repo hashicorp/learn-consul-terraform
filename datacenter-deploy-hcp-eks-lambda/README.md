@@ -45,7 +45,8 @@ You will perform these steps:
 10.  Visit the following urls in the browser to verify HashiCups deployed successfully.
 11. Confirm `public-api` routes traffic to `payments` service
     1. `kubectl port-forward deploy/public-api 8080`
-    2. ```
+    2. 
+    ```shell
     curl 'http://localhost:8080/api' \
       -H 'Accept-Encoding: gzip, deflate, br' \
       -H 'Content-Type: application/json' \
@@ -62,17 +63,19 @@ You will perform these steps:
 14. Create terminating gateway
     1. `kubectl apply --filename ../terminating-gateway-lambda-payments.yaml` 
 15. Give terminating gateway ACL token the ability to grant `service:write` for all linked services. ([GitHub Issue](https://github.com/hashicorp/consul/issues/12116#issuecomment-1019463753))
-    1. ```
+    1. 
+    ```shell
     service "payments" {
-        policy = "write"
-        intentions = "read"
+      policy = "write"
+      intentions = "read"
     }
     ```
 15. Create service splitter to route traffic to lambda function.
     1. `kubectl apply --filename ../service_splitter.yaml` 
 16. Confirm `public-api` routes traffic to `payments` service
     1. `kubectl port-forward deploy/public-api 8080`
-    2. ```
+    2. 
+    ```shell
     curl 'http://localhost:8080/api' \
       -H 'Accept-Encoding: gzip, deflate, br' \
       -H 'Content-Type: application/json' \
