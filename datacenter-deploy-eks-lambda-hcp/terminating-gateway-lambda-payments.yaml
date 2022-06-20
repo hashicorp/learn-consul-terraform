@@ -1,7 +1,0 @@
-apiVersion: consul.hashicorp.com/v1alpha1
-kind: TerminatingGateway
-metadata:
-  name: payments-lambda-gateway
-spec:
-  services:
-    - name: payments-lambda

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+HASHI_REPO="https://releases.hashicorp.com"
+HASHI_YUM_URL="https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo"
+GITHUB_CONTENT_URL="https://raw.githubusercontent.com"
+KUBE_URL="https://dl.k8s.io/release"
+GITHUB_URL="https://github.com"
+
+
+yum update -y
+yum install -y yum-utils && \
+yum-config-manager --add-repo "${HASHI_YUM_URL}"
+yum install -y nano emacs vim
+yum install -y openssl curl jq tar unzip wget awscli
+wget "${GITHUB_URL}"/mikefarah/yq/releases/download/"${yq_version}"/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+
+curl -LO "${KUBE_URL}"/"${kubectl_version}"/bin/linux/amd64/kubectl" && \
+    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+curl -fsSL -o get_helm.sh "${GITHUB_CONTENT_URL}"/helm/helm/main/scripts/get-helm-3 && \
+    chmod 0700 get_helm.sh && \
+    ./get_helm.sh --version ${helm_version}
+
+curl -LO "${HASHI_REPO}"/consul-k8s/"${consul_k8s_version}"/consul-k8s_${consul_k8s_version}_linux_amd64.zip && \
+    unzip consul-k8s_"${consul_k8s_version}"_linux_amd64.zip && \
+    install -o root -g root -m 0755 consul-k8s /usr/local/bin/consul-k8s
+
+curl -LO "${HASHI_REPO}"/consul/"${consul_version}"/consul_${consul_version}_linux_amd64.zip && \
+    unzip consul_${consul_version}_linux_amd64.zip && \
+    install -o root -g root -m 0755 consul /usr/local/bin/consul
+
+aws eks --region ${aws_region} update-kubeconfig --name ${cluster_name} --alias ${cluster_name}
+
+# Sleep forever to be able to login to the pod
+sleep infinity

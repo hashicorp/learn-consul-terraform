@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${SERVICE}
+spec:
+  replicas: ${SERVICE_REPLICAS}
+  selector:
+    matchLabels:
+      service: ${SERVICE}
+      app: ${SERVICE}
+  template:
+    metadata:
+      labels:
+        service: ${SERVICE}
+        app: ${SERVICE}
+      annotations:
+        prometheus.io/scrape: ${PROMETHEUS_SCRAPE} #'true'
+        prometheus.io/port: ${PROMETHEUS_PORT} #'9102'
+        consul.hashicorp.com/connect-inject: 'true'
+        consul.hashicorp.com/connect-service-upstreams: ${UPSTREAMS} #'products-api:9090, payments:1800'
+    spec:
+      serviceAccountName: ${SERVICE}
+      containers:
+        - name: ${SERVICE}
+          image: hashicorpdemoapp/public-api:v0.0.6
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: BIND_ADDRESS
+              value: ':8080'
+            - name: PRODUCT_API_URI
+              value: 'http://localhost:9090'
+            - name: PAYMENT_API_URI
+              value: 'http://localhost:1800'
+        - name: jaeger-agent
+          image: jaegertracing/jaeger-agent:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5775
+              name: zk-compact-trft
+              protocol: UDP
+            - containerPort: 5778
+              name: config-rest
+              protocol: TCP
+            - containerPort: 6831
+              name: jg-compact-trft
+              protocol: UDP
+            - containerPort: 6832
+              name: jg-binary-trft
+              protocol: UDP
+            - containerPort: 14271
+              name: admin-http
+              protocol: TCP
+          args:
+            - --reporter.grpc.host-port=dns:///jaeger-collector-headless.default:14250
+            - --reporter.type=grpc

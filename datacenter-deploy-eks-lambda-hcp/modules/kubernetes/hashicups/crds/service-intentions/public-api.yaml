@@ -1,0 +1,13 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: public-api
+  namespace: default
+spec:
+  sources:
+    - name: frontend
+      action: allow
+      namespace: default
+  destination:
+    name: public-api
+    namespace: defaul

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${SERVICE}
+spec:
+  replicas: ${SERVICE_REPLICAS}
+  selector:
+    matchLabels:
+      service: ${SERVICE}
+      app: ${SERVICE}
+  template:
+    metadata:
+      labels:
+        service: ${SERVICE}
+        app: ${SERVICE}
+      annotations:
+        prometheus.io/scrape: ${PROMETHEUS_SCRAPE} #'true'
+        prometheus.io/port: ${PROMETHEUS_PORT} #'9102'
+        consul.hashicorp.com/connect-inject: 'true'
+    spec:
+      serviceAccountName: ${SERVICE}
+      containers:
+        - name: ${SERVICE}
+          image: ${SERVICE_IMAGE} #hashicorpdemoapp/product-api-db:v0.0.20
+          ports:
+            - containerPort: ${SERVICE_CONTAINER_PORT} 5432
+          env:
+            - name: POSTGRES_DB
+              value: products
+            - name: POSTGRES_USER
+              value: ${SERVICE}
+            - name: POSTGRES_PASSWORD
+              value: password
+          # only listen on loopback so only access is via connect proxy
+          args: ['-c', 'listen_addresses=127.0.0.1']
+          volumeMounts:
+            - mountPath: '/var/lib/postgresql/data'
+              name: 'pgdata'
+      volumes:
+        - name: pgdata
+          emptyDir: {}

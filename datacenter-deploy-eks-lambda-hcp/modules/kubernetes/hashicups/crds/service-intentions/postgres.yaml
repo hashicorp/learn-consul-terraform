@@ -1,0 +1,13 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: postgres
+  namespace: default
+spec:
+  sources:
+    - name: products-api
+      action: allow
+      namespace: default
+  destination:
+    name: postgres
+    namespace: default

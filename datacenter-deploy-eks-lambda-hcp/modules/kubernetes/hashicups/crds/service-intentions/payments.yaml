@@ -1,0 +1,13 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: payments
+  namespace: default
+spec:
+  sources:
+    - name: public-api
+      action: allow
+      namespace: default
+  destination:
+    name: payments
+    namespace: default

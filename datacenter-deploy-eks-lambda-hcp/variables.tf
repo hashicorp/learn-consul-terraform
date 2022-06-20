@@ -4,27 +4,14 @@ variable "aws_region" {
   default     = "us-west-2"
 }
 
-#variable "hvn_settings" {
-#  type        = any
-#  description = "Settings for the HCP HVN"
-#  default = {
-##    name = {
-##      main-hvn = "main-hvn"
-##    }
-##    cloud_provider = {
-##      aws = "aws"
-##    }
-##    region = {
-##      us-east-1 = "us-east-1"
-##    }
-##    cidr_block = "172.25.16.0/20"
-#  }
-#}
-
-variable "cluster_networking" {
-  type        = map(any)
-  description = "VPC settings for this tutorial's EKS Cluster"
+variable "tutorial_networking" {
+  type        = any
+  description = "VPC settings for the EKS Cluster"
   default = {
+    hcp_cloud_provider = "aws"
+    hcp_hvn = "lambdaConsul"
+    hcp_hvn_cidr_block = "172.25.16.0/20"
+    hvn_peering_identifier = "lambdaConsul"
     vpc = {
       name            = "vpc-lambdaConsul"
       cidr_block      = "172.16.0.0/16"
@@ -34,11 +21,10 @@ variable "cluster_networking" {
   }
 }
 
-variable "cluster_definitions" {
+variable "eks_cluster_configuration" {
   description = "Cluster definitions for EKS"
-  type        = map(any)
+  type = any
   default = {
-
     name = "learn-consul-lambda"
   }
 }

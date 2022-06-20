@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${SERVICE}
+  labels:
+    app: ${SERVICE}
+spec:
+  replicas: ${SERVICE_REPLICAS}
+  selector:
+    matchLabels:
+      app: ${SERVICE}
+  template:
+    metadata:
+      labels:
+        app: ${SERVICE}
+      annotations:
+        prometheus.io/scrape: ${PROMETHEUS_SCRAPE} #"true"
+        prometheus.io/port: ${PROMETHEUS_PORT} "9102"
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/connect-service-upstreams: ${UPSTREAMS} #"postgres:5432"
+    spec:
+      serviceAccountName: ${SERVICE}
+      volumes:
+        - name: config
+          configMap:
+            name: db-configmap
+            items:
+              - key: config
+                path: conf.json
+      containers:
+        - name: ${SERVICE}
+          image: hashicorpdemoapp/product-api:v0.0.20
+          imagePullPolicy: Always
+          ports:
+            - containerPort: ${SERVICE_CONTAINER_PORT} #9090
+            - containerPort: ${SERVICE_PROMTHEUS_PORT} #9103
+          env:
+            - name: "CONFIG_FILE"
+              value: "/config/conf.json"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: ${SERVICE_CONTAINER_PORT}
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+            periodSeconds: 10
+            failureThreshold: 30
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
