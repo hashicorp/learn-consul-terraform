@@ -33,5 +33,5 @@ spec:
           configMap:
             name: nginx-config
             items:
-              - key: nginx.conf
+              - key: config
                 path: nginx.conf

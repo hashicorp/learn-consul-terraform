@@ -164,6 +164,7 @@ variable "hashicups_volume_and_mount_config" {
   default = {
     postgres = {
       config_map_name     = "postgres.yaml"
+      config_map_key      = "config"
       config_map_filename = "postgres.yaml"
       mount_path          = "/hashicups/app"
       volume_name         = "postgres"
@@ -171,6 +172,7 @@ variable "hashicups_volume_and_mount_config" {
     }
     payments = {
       config_map_name     = "payments.yaml"
+      config_map_key      = "config"
       config_map_filename = "payments.yaml"
       mount_path          = "/hashicups/app"
       volume_name         = "payments"
@@ -178,6 +180,7 @@ variable "hashicups_volume_and_mount_config" {
     }
     product-api = {
       config_map_name     = "product-api.yaml"
+      config_map_key      = "config"
       config_map_filename = "product-api.yaml"
       mount_path          = "/hashicups/app"
       volume_name         = "product-api"
@@ -185,6 +188,7 @@ variable "hashicups_volume_and_mount_config" {
     }
     public-api = {
       config_map_name     = "public-api.yaml"
+      config_map_key      = "config"
       config_map_filename = "public-api.yaml"
       mount_path          = "/hashicups/app"
       volume_name         = "public-api"
@@ -192,10 +196,20 @@ variable "hashicups_volume_and_mount_config" {
     }
     frontend = {
       config_map_name     = "frontend.yaml"
+      config_map_key      = "config"
       config_map_filename = "frontend.yaml"
       mount_path          = "/hashicups/app"
       volume_name         = "frontend"
       file_permissions    = "0755"
+    }
+    nginx = {
+      config_map_name = "nginx.yaml"
+      config_map_key      = "config"
+      config_map_filename = "nginx.yaml"
+      mount_path = "/hashicups/app"
+      volume_name = "nginx"
+      file_permission = "0755"
+
     }
   }
 }

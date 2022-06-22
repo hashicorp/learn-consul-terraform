@@ -80,6 +80,10 @@ locals {
     sspm = "servicesplitter-payments-lambda.yaml"
     tgpm = "terminatinggateway-payments-lambda.yaml"
   }
+  api_gw_cmaps = {
+    gw = "consul-api-gateway.yaml"
+    routes = "consul-api-gateway-routes.yaml"
+  }
 }
 
 resource "kubernetes_secret" "consul_secrets" {
@@ -400,7 +404,7 @@ resource "kubernetes_deployment" "workingEnvironment" {
                 config_map {
                   name = sources.value.config_map_filename
                   items {
-                    key = "config"
+                    key = sources.value.config_map_key
                     path = sources.value.config_map_filename
                   }
                 }
@@ -415,6 +419,25 @@ resource "kubernetes_deployment" "workingEnvironment" {
             dynamic "sources" {
 
               for_each = local.cm_crd_names
+              content {
+                config_map {
+                  name = sources.value
+                  items {
+                    key = "config"
+                    path = sources.value
+                  }
+                }
+              }
+            }
+          }
+        }
+        volume {
+          name = "consulapigateway"
+          projected {
+            default_mode = "0755"
+            dynamic "sources" {
+
+              for_each = local.api_gw_cmaps
               content {
                 config_map {
                   name = sources.value
@@ -449,6 +472,11 @@ resource "kubernetes_deployment" "workingEnvironment" {
             name       = "hashicups"
           }
           volume_mount {
+            mount_path ="/api-gateway"
+            name       = "consulapigateway"
+            read_only = true
+          }
+          volume_mount {
             mount_path = "/kube-crds"
             name       = "consulcrds"
           }
@@ -460,6 +488,7 @@ resource "kubernetes_deployment" "workingEnvironment" {
             mount_path = var.startup_script_config_map_options.mount_path
             name       = var.startup_script_config_map_options.volume_name
           }
+
           volume_mount {
             mount_path = var.aws_creds_config_map_options.mount_path
             name       = var.aws_creds_config_map_options.volume_name
