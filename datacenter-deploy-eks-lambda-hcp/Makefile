@@ -1,11 +1,14 @@
-all:
-	tutorial tutorial_resources
+#all:
+#	. working-environment
 
-tutorial:
+.PHONY install:
+ifeq ($(install),"true")
 	@terraform init
-	@terraform apply -auto-approve
+	#@terraform init
+endif
 
-tutorial_resources:
-	@terraform init -chdir='./working-environment'
-	@terraform apply -auto-approve -chdir='./working-environment'
 
+.PHONY apply:
+apply:
+	terraform apply -autoa-approve
+	terraform -chdir=working-environment apply -auto-approve

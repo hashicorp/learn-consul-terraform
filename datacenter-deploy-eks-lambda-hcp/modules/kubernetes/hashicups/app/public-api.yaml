@@ -1,28 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ${SERVICE}
+  name: public-api
 spec:
-  replicas: ${SERVICE_REPLICAS}
+  replicas: 1
   selector:
     matchLabels:
-      service: ${SERVICE}
-      app: ${SERVICE}
+      service: public-api
+      app: public-api
   template:
     metadata:
       labels:
-        service: ${SERVICE}
-        app: ${SERVICE}
+        service: public-api
+        app: public-api
       annotations:
-        prometheus.io/scrape: ${PROMETHEUS_SCRAPE} #'true'
-        prometheus.io/port: ${PROMETHEUS_PORT} #'9102'
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9102'
         consul.hashicorp.com/connect-inject: 'true'
-        consul.hashicorp.com/connect-service-upstreams: ${UPSTREAMS} #'products-api:9090, payments:1800'
+        consul.hashicorp.com/connect-service-upstreams: 'products-api:9090, payments:1800'
     spec:
-      serviceAccountName: ${SERVICE}
+      serviceAccountName: public-api
       containers:
-        - name: ${SERVICE}
-          image: hashicorpdemoapp/public-api:v0.0.6
+        - name: public-api
+          image: hashicorpdemoapp/public-api:v0.0.7
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

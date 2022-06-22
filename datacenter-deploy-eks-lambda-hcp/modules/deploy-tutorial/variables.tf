@@ -25,6 +25,10 @@ variable "cluster_definitions" {
   }
 }
 
+variable "api_gateway_version" {
+  default = "0.2.1"
+}
+
 variable "consul_image" {
   default = "hashicorp/consul:1.12.2"
 }
@@ -42,32 +46,12 @@ variable "tutorial_config" {
     hcp_cloud_provider          = string
     hcp_consul_tier             = string
     vpc_name                    = string
-
-
-    eks_cluster_name            = string
-    aws_profile_name                  = string
-    hcp_hvn_cidr_block                = string
-    hvn_peering_identifier            = string
-    eks_cluster_stage                 = string
-    hcp_hvn                           = string
-    #aws_default_route_table_id  = string
-    #aws_vpc_id                  = string
-    #private_route_table_ids     = list(string)
-    #public_route_table_ids      = list(string)
-
-    #security_group_ids          = list(string)
-    #consul_bootstrap_token      = string
-    #consul_ca_certificate       = string
-    #consul_gossip_key           = string
-    #hcp_consul_endpoint         = string
-    #kube_cluster_service_account_name = string
-
-
-
-
-
-
-
+    eks_cluster_name        = string
+    aws_profile_name        = string
+    hcp_hvn_cidr_block      = string
+    hvn_peering_identifier  = string
+    eks_cluster_stage       = string
+    hcp_hvn                 = string
   })
   description = "Object definition for tutorial configuration."
 }

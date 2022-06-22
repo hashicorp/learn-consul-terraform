@@ -22,14 +22,9 @@ variable "resource_config" {
     aws_private_subnets         = list(string)
     aws_security_group_ids      = list(string)
     aws_profile_name            = string
-
     hcp_cloud_provider          = string
     hcp_consul_datacenter       = string
     hcp_consul_tier             = string
-    #hcp_consul_bootstrap_token  = string
-    #hcp_consul_ca_certificate   = string
-    #hcp_consul_gossip_key       = string
-    #hcp_datacenter              = string
     enable_hcp_consul_endpoint  = bool
     hcp_hvn                     = string
     hcp_hvn_cidr_block          = string
@@ -82,93 +77,32 @@ variable "eks_cluster_stage" {
   default = "dev"
 }
 
-#variable "hvn_name" {
-#  default = "lambdaConsul"
-#}
-#
-#variable "hcp_hvn_cidr_block" {
-#  type        = string
-#  description = "CIDR block for HCP"
-#  default     = "172.25.16.0/20"
-#}
+variable "policy_name" {
+  type        = string
+  description = "Name of the IAM Policy"
+  default = "tutorial-lambda-service-account"
+}
 
-#variable "hvn_peering_identifier" {
-#  default = "lambdaConsul"
-#}
+variable "description" {
+  type        = string
+  description = "Policy description"
+  default = "IAM Policy for Kubernetes Service Account"
+}
 
-#variable "kube_context" {
-#  type        = string
-#  description = "Kubeconfig context"
-#  default     = "default"
-#}
+variable "local_policy_file_path" {
+  type        = string
+  description = "The path of the local policy file in this module"
+  default     = "iam_policies/iam_policy.json.tftpl"
+}
 
-#variable "kubeconfig_path" {
-#  type        = string
-#  description = "Path to kubeconfig file"
-#  default     = "~/.kube/config"
-#}
+variable "kube_namespace" {
+  type = string
+  description = "Which namespace to work in, for this tutorial"
+  default = "default"
+}
 
-#variable "shared_annotations" {
-#  type        = map(string)
-#  description = "Shared annotations by all containers"
-#  default = {
-#    "consul.hashicorp.com/connect-inject" = "true"
-#  }
-#}
-#
-#variable "shared_annotations_prometheus" {
-#  type        = map(string)
-#  description = "Support for prometheus"
-#  default = {
-#    "prometheus.io/scrape" = "true"
-#    "prometheus.io/port"   = "9102"
-#  }
-#}
-
-#variable "global_kube_resources" {
-#  default = {
-#    payments = {
-#      has_volumes       = false
-#      has_volume_mounts = false
-#    }
-#    public-api = {
-#      has_volumes       = false
-#      has_volume_mounts = false
-#    }
-#    product-api = {
-#      has_volumes       = true
-#      has_configmap     = true
-#      has_volume_mounts = true
-#    }
-#    postgres = {
-#      has_volumes       = true
-#      has_configmap     = false
-#      has_volume_mounts = true
-#    }
-#    frontend = {
-#      has_volumes       = false
-#      has_volume_mounts = false
-#    }
-#  }
-#}
-
-#variable "region" {
-#  type = string
-#  default = "us-west-2"
-#}
-
-#variable "kubernetes_service_account" {
-#  type = string
-#  default = "tutorial"
-#}
-
-#variable "profile_name" {
-#  type = string
-#  default = "tutorial"
-#}
-
-#variable "lambda_payments_path" {
-#  type        = string
-#  description = "Path to the HashiCups payments zip file for lambda"
-#}
-
+variable "kube_service_account_name" {
+  type = string
+  description = "Service Account for the working environment"
+  default = "lambda-consul"
+}

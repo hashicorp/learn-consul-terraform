@@ -26,11 +26,12 @@ module "remove_eni" {
 
 resource "local_file" "consul_k8s_values" {
   content = templatefile("${path.root}/modules/kubernetes/template_scripts/values.yaml.tftpl", {
-    #https://
-    CONSUL_PRIVATE_ENDPOINT = substr(module.resources.resources.consul_http_addr, 8, -1)
+    # Removes the protocol from the URL for Consul
+    CONSUL_PRIVATE_ENDPOINT = substr(module.resources.resources.consul_private_endpoint, 8, -1)
     CONSUL_DATACENTER       = local.resource_config.hcp_consul_datacenter
     CONSUL_IMAGE            = var.consul_image
     KUBE_CONTROL_PLANE      = module.resources.resources.kube_cluster_endpoint
+    API_GATEWAY_VERSION     = var.api_gateway_version
   })
   filename = "${path.root}/working-environment/rendered/values.yaml"
 }
@@ -48,5 +49,11 @@ profile_name="${var.tutorial_config.aws_profile_name}"
 cluster_service_account_name="${var.cluster_definitions.service_account_name}"
 cluster_name="${var.tutorial_config.eks_cluster_name}"
 cluster_region="${var.tutorial_config.aws_region}"
+consul_datacenter="${var.tutorial_config.hcp_datacenter}"
+consul_secret_id="${module.resources.resources.consul_secret_id}"
+gossip_key="${module.resources.resources.consul_gossip_key}"
+kube_context="default"
+kube_cluster_ca="${module.resources.resources.kube_cluster_ca}"
+role_arn="${module.resources.resources.kube_service_account_iam_policy_arn}"
 CONFIGURATION
 }

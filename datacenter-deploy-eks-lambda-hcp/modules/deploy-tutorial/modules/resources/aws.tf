@@ -13,7 +13,6 @@ resource "aws_route" "peering-public-default" {
   vpc_peering_connection_id = aws_vpc_peering_connection_accepter.peer.vpc_peering_connection_id
 }
 
-
 # Create routes for HCP Peering to the public route table.
 resource "aws_route" "hcp_peering_public" {
   count                     = length(var.resource_config.aws_public_route_table_ids)
@@ -27,7 +26,6 @@ resource "aws_vpc_peering_connection_accepter" "peer" {
   vpc_peering_connection_id = hcp_aws_network_peering.default.provider_peering_id
   auto_accept               = true
 }
-
 
 # Security Group created for the AWS VPC. This eventually holds the settings for peering between HCP and AWS.
 resource "aws_security_group" "open" {
@@ -94,4 +92,18 @@ resource "aws_security_group" "hashicups_kubernetes" {
     self      = true
   }
 
+}
+
+# Creates the IAM Policy for the EKS Cluster to describe itself and assume IAM Roles
+resource "aws_iam_policy" "eks_cluster_describe_and_assume" {
+  name = var.policy_name
+  policy = templatefile("${path.module}/${var.local_policy_file_path}", {
+    cluster_arn = module.eks.cluster_arn
+  })
+}
+
+# Attached the policy above to a passed role name
+resource "aws_iam_role_policy_attachment" "serviceAccountPolicyAttach" {
+  policy_arn = aws_iam_policy.eks_cluster_describe_and_assume.arn
+  role       = module.iam_role_for_service_accounts.iam_role_name
 }

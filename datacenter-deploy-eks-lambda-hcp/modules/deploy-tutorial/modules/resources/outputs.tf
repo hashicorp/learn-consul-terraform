@@ -9,10 +9,10 @@ output "resources" {
     consul_public_endpoint        = hcp_consul_cluster.server.consul_public_endpoint_url
     consul_http_token             = hcp_consul_cluster.server.consul_root_token_secret_id
     kube_cluster_endpoint         = module.eks.cluster_endpoint
-    #aws_region                    = var.resource_config.aws_region
     kube_cluster_name             = module.eks.cluster_id
-    #kube_cluster_region           = var.resource_config.aws_region
     consul_gossip_key             = local.gossip_key
-
+    kube_cluster_ca               = module.eks.cluster_certificate_authority_data
+    consul_secret_id              = hcp_consul_cluster.server.consul_root_token_secret_id
+    kube_service_account_iam_policy_arn = aws_iam_policy.eks_cluster_describe_and_assume.arn
   }
 }

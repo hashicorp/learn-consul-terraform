@@ -1,5 +1,6 @@
 locals {
-  rand = lower(random_id.tutorial.b64_url)
+  rand = random_string.tutorial.id
+  #rand = lower(random_id.tutorial.b64_url)
 
   hcp_cloud_provider       = var.tutorial_networking.hcp_cloud_provider
   aws_region               = var.aws_region
@@ -27,7 +28,14 @@ locals {
   }
 }
 
-resource "random_id" "tutorial" {
-  byte_length = 2
+#resource "random_id" "tutorial" {
+#  byte_length = 2
+#}
+
+resource "random_string" "tutorial" {
+  lower = true
+  upper = false
+  min_lower = 5
+  length = 5
 }
 

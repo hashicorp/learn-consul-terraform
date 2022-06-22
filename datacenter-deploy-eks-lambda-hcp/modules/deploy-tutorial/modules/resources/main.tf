@@ -1,10 +1,9 @@
 locals {
-  unique_cluster_name = "${var.resource_config.aws_eks_cluster_name}-${var.resource_config.identifier}"
+  unique_cluster_name = var.resource_config.aws_eks_cluster_name
+  unique_policy_name= "${var.policy_name}-${var.resource_config.identifier}"
 }
 
-# Deploys Amazon EKS
 module "eks" {
-  # Full URL due to this issue: https://github.com/VladRassokhin/intellij-hcl/issues/365
   source                          = "registry.terraform.io/terraform-aws-modules/eks/aws"
   version                         = ">=18.9.0"
   cluster_name                    = local.unique_cluster_name
@@ -48,8 +47,16 @@ module "eks" {
   }
 }
 
-#module "iam_role_for_service_accounts" {
-#  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-#}
+module "iam_role_for_service_accounts" {
+  source    = "registry.terraform.io/terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  role_name = lower(local.unique_cluster_name)
+  version   = "4.14.0"
 
+  oidc_providers = {
+    one = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["${var.kube_namespace}:${var.kube_service_account_name}"]
+    }
+  }
+}
 

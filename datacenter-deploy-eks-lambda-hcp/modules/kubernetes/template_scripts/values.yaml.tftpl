@@ -1,49 +1,64 @@
 global:
-  name: consul
   enabled: false
+  name: consul
   datacenter: ${CONSUL_DATACENTER}
   image: ${CONSUL_IMAGE}
   acls:
+    acls:
     manageSystemACLs: true
     bootstrapToken:
       secretName: consul-bootstrap-token
       secretKey: token
-  gossipEncryption:
-    secretName: consul-gossip-key
-    secretKey: key
   tls:
     enabled: true
     enableAutoEncrypt: true
     caCert:
       secretName: consul-ca-cert
       secretKey: tls.crt
+  gossipEncryption:
+    secretName: consul-gossip-key
+    secretKey: key
+
 externalServers:
   enabled: true
-  httpsPort: 443
   hosts:
-    - ${CONSUL_PRIVATE_ENDPOINT}
-  k8sAuthMethodHost:
-    - ${KUBE_CONTROL_PLANE}
+  - ${CONSUL_PRIVATE_ENDPOINT}
+  httpsPort: 443
   useSystemRoots: true
+  k8sAuthMethodHost: ${KUBE_CONTROL_PLANE}
+
+server:
+  enabled: false
+
+client:
+  enabled: true
+  grpc: true
+  join:
+  - ${CONSUL_PRIVATE_ENDPOINT}
+#  nodeMeta:
+#    terraform-module: "hcp-eks-client"
+  extraConfig: |
+    {
+      "connect": {
+        "enable_serverless_plugin": true
+      }
+    }
+
 terminatingGateways:
   enabled: true
   defaults:
     replicas: 1
-client:
-  join:
-    - ${CONSUL_PRIVATE_ENDPOINT}
-  enabled: true
-  grpc: true
-  extraConfig: |
-    {
-    "connect":
-      {
-        "enable_serverless_plugin": true
-      },
-    }
+
 connectInject:
   enabled: true
   envoyExtraArgs: "--component-log-level upstream:debug,http:debug,router:debug,config:debug"
   aclBindingRuleSelector: ""
+
 controller:
   enabled: true
+
+apiGateway:
+  enabled: true
+  image: "hashicorp/consul-api-gateway:${API_GATEWAY_VERSION}"
+  managedGatewayClass:
+    serviceType: LoadBalancer

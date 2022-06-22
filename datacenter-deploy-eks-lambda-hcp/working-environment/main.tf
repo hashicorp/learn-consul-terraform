@@ -8,7 +8,6 @@ module "kubernetes_resources" {
   consul_config                = var.consul_config
   consul_http_addr             = var.consul_http_addr
   consul_http_token            = var.consul_http_token
-  consul_k8s_api_aws           = var.kube_cluster_endpoint
   consul_secret_id             = var.consul_secret_id
   kube_context                 = var.kube_context
   role_arn                     = var.role_arn
@@ -20,4 +19,5 @@ module "kubernetes_resources" {
   working-pod-service_account  = var.cluster_service_account_name
   working-pod-name             = var.pod_name
   consul_datacenter            = var.consul_datacenter
+  kube_cluster_ca              = var.kube_cluster_ca
 }

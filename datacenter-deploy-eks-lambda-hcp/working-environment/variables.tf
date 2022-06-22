@@ -77,3 +77,4 @@ variable "cluster_service_account_name" {
 variable "gossip_key" {}
 
 variable "consul_datacenter" {}
+variable "kube_cluster_ca" {}

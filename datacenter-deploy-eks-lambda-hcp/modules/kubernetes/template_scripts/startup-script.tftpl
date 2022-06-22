@@ -1,34 +1,50 @@
 #!/usr/bin/env bash
-HASHI_REPO="https://releases.hashicorp.com"
-HASHI_YUM_URL="https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo"
-GITHUB_CONTENT_URL="https://raw.githubusercontent.com"
-KUBE_URL="https://dl.k8s.io/release"
-GITHUB_URL="https://github.com"
-
-
 yum update -y
 yum install -y yum-utils && \
-yum-config-manager --add-repo "${HASHI_YUM_URL}"
+yum-config-manager --add-repo ${hashi_yum_url}
 yum install -y nano emacs vim
 yum install -y openssl curl jq tar unzip wget awscli
-wget "${GITHUB_URL}"/mikefarah/yq/releases/download/"${yq_version}"/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+wget ${github_url}/mikefarah/yq/releases/download/${yq_version}/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
 
-curl -LO "${KUBE_URL}"/"${kubectl_version}"/bin/linux/amd64/kubectl" && \
+curl -LO ${kube_url}/${kubectl_version}/bin/linux/amd64/kubectl && \
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
-curl -fsSL -o get_helm.sh "${GITHUB_CONTENT_URL}"/helm/helm/main/scripts/get-helm-3 && \
+curl -fsSL -o get_helm.sh ${github_content_url}/helm/helm/main/scripts/get-helm-3 && \
     chmod 0700 get_helm.sh && \
     ./get_helm.sh --version ${helm_version}
 
-curl -LO "${HASHI_REPO}"/consul-k8s/"${consul_k8s_version}"/consul-k8s_${consul_k8s_version}_linux_amd64.zip && \
-    unzip consul-k8s_"${consul_k8s_version}"_linux_amd64.zip && \
+curl -LO ${hashi_repo}/consul-k8s/${consul_k8s_version}/consul-k8s_${consul_k8s_version}_linux_amd64.zip && \
+    unzip consul-k8s_${consul_k8s_version}_linux_amd64.zip && \
     install -o root -g root -m 0755 consul-k8s /usr/local/bin/consul-k8s
 
-curl -LO "${HASHI_REPO}"/consul/"${consul_version}"/consul_${consul_version}_linux_amd64.zip && \
+curl -LO ${hashi_repo}/consul/${consul_version}/consul_${consul_version}_linux_amd64.zip && \
     unzip consul_${consul_version}_linux_amd64.zip && \
     install -o root -g root -m 0755 consul /usr/local/bin/consul
 
+rm -f /consul-k8s${consul_k8s_version}_linux_amd64.zip
+rm -f /consul_${consul_version}_linux_amd64.zip
+rm -f /get_helm.sh
+rm -f /kubectl
+rm -f /consul-k8s
+rm -f /consul
+
 aws eks --region ${aws_region} update-kubeconfig --name ${cluster_name} --alias ${cluster_name}
 
-# Sleep forever to be able to login to the pod
+sleep 10
+
+## Install Consul. The API Gateway CRDs have already been installed.
+consul-k8s install -config-file=/helm/config -namespace=default -auto-approve -timeout=3m
+
+
+# Deploy HashiCups pods
+kubectl apply -f /hashicups/app/
+
+kubectl apply $(ls /kube-crds/servicedefaults*.yaml | awk ' { print " -f " $1 } ')
+kubectl apply $(ls /kube-crds/serviceintentions*.yaml | awk ' { print " -f " $1 } ')
+
+
+
+
+
+# Sleep forever so the pod runs indefinitely
 sleep infinity
