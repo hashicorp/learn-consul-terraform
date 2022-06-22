@@ -37,17 +37,20 @@ sleep 10
 # Capture as var for future use if needed.
 CONSUL_STATUS=$(consul-k8s status)
 RETVAL=$?
-if [ $RETVAL -eq 1 ]; then
-    echo "Consul already installed, meaning this script has already run before. So no need to install again"
-    sleep infinity
-else
-    consul-k8s install -config-file=/helm/config -namespace=default -auto-approve -timeout=3m
-    # Deploy HashiCups pods
-    kubectl apply -f /hashicups/app/
-    kubectl apply $(ls /kube-crds/servicedefaults*.yaml | awk ' { print " -f " $1 } ')
-    kubectl apply $(ls /kube-crds/serviceintentions*.yaml | awk ' { print " -f " $1 } ')
-fi
+if  [[ $CONSUL_STATUS == *"couldn't find consul installation*" ]]
+    then
+        # The container can be rebuilt, but we only want to run this part of the container bootstrap when consul isn't installed.
+        consul-k8s install -config-file=/helm/config -namespace=default -auto-approve -timeout=3m
+        # Deploy HashiCups pods
+        kubectl apply -f /hashicups/app/ -f /kube-crds/proxy-defaults.yaml
+        kubectl apply $(ls /kube-crds/servicedefaults*.yaml | awk ' { print " -f " $1 } ')
+        kubectl apply $(ls /kube-crds/serviceintentions*.yaml | awk ' { print " -f " $1 } ')
+        kubectl apply -f /api-gateway/consul-api-gateway.yaml \
+            && kubectl wait --for=condition=ready gateway/api-gateway --timeout=90s
+        kubectl apply --filename ../api-gw/routes.yaml
 
+        sleep infinity
+fi
 
 
 # Sleep forever so the pod runs indefinitely

@@ -14,5 +14,6 @@ output "resources" {
     kube_cluster_ca               = module.eks.cluster_certificate_authority_data
     consul_secret_id              = hcp_consul_cluster.server.consul_root_token_secret_id
     kube_service_account_iam_policy_arn = aws_iam_policy.eks_cluster_describe_and_assume.arn
+    kube_service_account_associated_iam_role = module.iam_role_for_service_accounts.iam_role_arn
   }
 }

@@ -54,6 +54,6 @@ consul_secret_id="${module.resources.resources.consul_secret_id}"
 gossip_key="${module.resources.resources.consul_gossip_key}"
 kube_context="default"
 kube_cluster_ca="${module.resources.resources.kube_cluster_ca}"
-role_arn="${module.resources.resources.kube_service_account_iam_policy_arn}"
+role_arn="${module.resources.resources.kube_service_account_associated_iam_role}"
 CONFIGURATION
 }

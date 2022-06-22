@@ -15,5 +15,5 @@ apply:
 
 .PHONY destroy:
 destroy:
-	terraform chdir=working-environment destroy -auto-approve
+	terraform -chdir=working-environment destroy -auto-approve
 	terraform destroy -auto-approve

@@ -3,7 +3,7 @@
   "Statement": [
     {
       "Effect": "Allow",
-      "Action":  [ "sts:AssumeRole", "eks:DescribeCluster" ],
+      "Action":  [ "sts:AssumeRole", "eks:*", "sts:AssumeRoleWithWebIdentity" ],
       "Resource": ["${cluster_arn}" ]
     }
   ]

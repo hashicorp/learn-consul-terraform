@@ -104,5 +104,5 @@ variable "kube_namespace" {
 variable "kube_service_account_name" {
   type = string
   description = "Service Account for the working environment"
-  default = "lambda-consul"
+  default = "tutorial"
 }
