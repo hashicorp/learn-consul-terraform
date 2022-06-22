@@ -10,5 +10,9 @@ endif
 
 .PHONY apply:
 apply:
-	terraform apply -autoa-approve
+	terraform apply -auto-approve
 	terraform -chdir=working-environment apply -auto-approve
+
+.PHONY destroy
+destroy:
+	terraform chdir=working-environment destroy -auto-approve
