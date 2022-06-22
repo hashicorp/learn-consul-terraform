@@ -13,6 +13,7 @@ apply:
 	terraform apply -auto-approve
 	terraform -chdir=working-environment apply -auto-approve
 
-.PHONY destroy
+.PHONY destroy:
 destroy:
 	terraform chdir=working-environment destroy -auto-approve
+	terraform destroy -auto-approve
