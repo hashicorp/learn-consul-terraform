@@ -159,7 +159,6 @@ variable "cleanup_crd_options" {
   }
 }
 
-
 variable "hashicups_volume_and_mount_config" {
   default = {
     postgres = {
@@ -385,44 +384,47 @@ variable "service_variables" {
         cm_name = "nginx-config"
         cm_data = {
           config = <<EOF
-            events {}
-            http {
-              include /etc/nginx/conf.d/*.conf;
-              server {
-                server_name localhost;
-                listen 80 default_server;
-                proxy_http_version 1.1;
-                proxy_set_header Upgrade $http_upgrade;
-                proxy_set_header Connection 'upgrade';
-                proxy_set_header Host $host;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_temp_file_write_size 64k;
-                proxy_connect_timeout 10080s;
-                proxy_send_timeout 10080;
-                proxy_read_timeout 10080;
-                proxy_buffer_size 64k;
-                proxy_buffers 16 32k;
-                proxy_busy_buffers_size 64k;
-                proxy_redirect off;
-                proxy_request_buffering off;
-                proxy_buffering off;
-                location / {
-                  proxy_pass http://127.0.0.1:3000;
-                }
-                location /static {
-                  proxy_cache_valid 60m;
-                  proxy_pass http://127.0.0.1:3000;
-                }
-                location /api {
-                  proxy_pass http://127.0.0.1:8080;
-                }
-                error_page   500 502 503 504  /50x.html;
-                location = /50x.html {
-                    root   /usr/share/nginx/html;
+          events {}
+              http {
+                include /etc/nginx/conf.d/*.conf;
+                 server {
+                    server_name localhost;
+                    listen 80 default_server;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection 'upgrade';
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_temp_file_write_size 64k;
+                    proxy_connect_timeout 10080s;
+                    proxy_send_timeout 10080;
+                    proxy_read_timeout 10080;
+                    proxy_buffer_size 64k;
+                    proxy_buffers 16 32k;
+                    proxy_busy_buffers_size 64k;
+                    proxy_redirect off;
+                    proxy_request_buffering off;
+                    proxy_buffering off;
+                    location / {
+                      proxy_pass http://127.0.0.1:3000;
+                    }
+                    location ^~ /hashicups {
+                      rewrite ^/hashicups(.*)$ /$1 last;
+                    }
+                    location /static {
+                      proxy_cache_valid 60m;
+                      proxy_pass http://127.0.0.1:3000;
+                    }
+                    location /api {
+                      proxy_pass http://127.0.0.1:8080;
+                    }
+                    error_page   500 502 503 504  /50x.html;
+                    location = /50x.html {
+                      root   /usr/share/nginx/html;
                     }
                   }
                 }
-                EOF
+          EOF
         }
       }
     }
@@ -460,10 +462,12 @@ variable "container_interpreter" {
   default = ["/bin/bash", "-c"]
 }
 
-
 variable "working-pod-service_account" {}
+
 variable "working-pod-name" {}
+
 variable "working-pod-container_port" {
   default = 8080
 }
+
 variable "kube_cluster_ca" {}
