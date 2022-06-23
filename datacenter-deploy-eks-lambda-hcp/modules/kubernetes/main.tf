@@ -87,6 +87,14 @@ locals {
   }
 }
 
+data "kustomization" "gateway_crds" {
+  path = "github.com/hashicorp/consul-api-gateway/config/crd?ref=v${var.api_gateway_version}"
+}
+resource "kustomization_resource" "gateway_crds" {
+  for_each = data.kustomization.gateway_crds.ids
+  manifest = data.kustomization.gateway_crds.manifests[each.value]
+}
+
 resource "kubernetes_secret" "consul_secrets" {
   for_each = local.kube_secrets
   metadata {
@@ -112,15 +120,6 @@ resource "kubernetes_service_account" "hashicups_service_accounts" {
     name = each.value.ServiceAccount.sa_name
   }
   automount_service_account_token = each.value.ServiceAccount.automount_service_account_token
-}
-
-
-data "kustomization" "gateway_crds" {
-  path = "github.com/hashicorp/consul-api-gateway/config/crd?ref=v${var.api_gateway_version}"
-}
-resource "kustomization_resource" "gateway_crds" {
-  for_each = data.kustomization.gateway_crds.ids
-  manifest = data.kustomization.gateway_crds.manifests[each.value]
 }
 
 # Create a cluster role binding for the service account
