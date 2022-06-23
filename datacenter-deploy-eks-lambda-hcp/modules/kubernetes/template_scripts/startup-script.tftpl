@@ -30,14 +30,9 @@ rm -f /consul
 
 aws eks --region ${aws_region} update-kubeconfig --name ${cluster_name} --alias ${cluster_name}
 
-sleep 10
 
-## Install Consul. The API Gateway CRDs have already been installed.
-
-# Capture as var for future use if needed.
-CONSUL_STATUS=$(consul-k8s status)
-RETVAL=$?
-if  [[ $CONSUL_STATUS == *"couldn't find consul installation*" ]]
+CONSUL_STATUS=$(consul-k8s status | grep -io "couldn't find consul installation")
+if  [[ $${CONSUL_STATUS} == "couldn't find consul installation" ]]
     then
         # The container can be rebuilt, but we only want to run this part of the container bootstrap when consul isn't installed.
         consul-k8s install -config-file=/helm/config -namespace=default -auto-approve -timeout=3m
@@ -48,7 +43,6 @@ if  [[ $CONSUL_STATUS == *"couldn't find consul installation*" ]]
         kubectl apply -f /api-gateway/consul-api-gateway.yaml \
             && kubectl wait --for=condition=ready gateway/api-gateway --timeout=90s
         kubectl apply --filename ../api-gw/routes.yaml
-
         sleep infinity
 fi
 
