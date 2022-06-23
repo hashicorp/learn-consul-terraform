@@ -1,12 +1,10 @@
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceIntentions
 metadata:
-  name: public-api
+  name: payments
 spec:
   sources:
-    - name: frontend
-      action: allow
     - name: nginx
       action: allow
   destination:
-    name: public-api
+    name: frontend
