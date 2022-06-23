@@ -5,7 +5,7 @@ module "tutorial_infrastructure" {
 
 resource "null_resource" "update_kubeconfig" {
   provisioner "local-exec" {
-    command = "aws eks --region ${var.aws_region} update-kubeconfig --alias ${local.unique_kube_cluster_name} --name ${local.unique_kube_cluster_name}"
+    command = "aws eks --region ${var.aws_region} update-kubeconfig --alias lambdaTutorial --name ${local.unique_kube_cluster_name}"
   }
   depends_on = [module.tutorial_infrastructure]
 }
