@@ -18,7 +18,6 @@ module "eks" {
     kube-proxy = {}
     vpc-cni = {
       resolve_conflicts = "OVERWRITE"
-      service_account_role_arn = module.iam_role_for_service_accounts.iam_role_arn
     }
   }
 
@@ -34,7 +33,6 @@ module "eks" {
     instance_types         = [var.eks_instance_type]
     vpc_security_group_ids = var.resource_config.aws_security_group_ids
     vpc_security_group_ids = [aws_security_group.open.id, aws_security_group.hashicups_kubernetes.id]
-    iam_role_attach_cni_policy = true
   }
 
   eks_managed_node_groups = {
@@ -42,7 +40,6 @@ module "eks" {
       min_size     = var.eks_min_instances
       max_size     = var.eks_max_instances
       desired_size = var.eks_desired_instances
-      iam_role_attach_cni_policy = true
     }
   }
   tags = {
