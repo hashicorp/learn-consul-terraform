@@ -1,3 +1,5 @@
+clusterContext = lambdaTutorial
+
 .PHONY apply:
 apply:
 	terraform apply -auto-approve
@@ -5,10 +7,9 @@ apply:
 
 .PHONY destroy:
 destroy:
-	cluster-context := lambdaTutorial
 	terraform -chdir=working-environment destroy -auto-approve
 	terraform destroy -auto-approve
-	kubectl config delete-context ${cluster-context}
+	kubectl config delete-context $(clusterContext)
 
 
 .PHONE debug:
