@@ -4,8 +4,19 @@ module "tutorial_infrastructure" {
 }
 
 resource "null_resource" "update_kubeconfig" {
+  triggers = {
+    # Destroy-time provisioners can't reference variables outside of the resource scope. Adding the kubeconfig
+    # to the triggers map in null_resource to access via `self.triggers.kubeconfig_file`.
+    kubeconfig_file = var.kubeconfig
+  }
   provisioner "local-exec" {
-    command = "aws eks --region ${var.aws_region} update-kubeconfig --alias lambdaTutorial --name ${local.unique_kube_cluster_name}"
+    command = "aws eks --region ${var.aws_region}  update-kubeconfig --kubeconfig ${var.kubeconfig} --alias ${var.kube_ctx_alias} --name ${local.unique_kube_cluster_name}"
   }
   depends_on = [module.tutorial_infrastructure]
+
+  provisioner "local-exec" {
+    when = destroy
+    # Removing the tutorial's kubeconfig. Unless the reader changes this explicitly, the tutorial kubeconfig is not the default kubeconfig.
+    command = "rm $HOME/.kube/${self.triggers.kubeconfig_file}"
+  }
 }

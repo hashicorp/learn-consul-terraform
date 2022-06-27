@@ -26,9 +26,22 @@ variable "eks_cluster_configuration" {
   type = any
   default = {
     name = "learn-consul-lambda"
+    stage = "dev"
   }
 }
 
 variable "hcp_consul_tier" {
   default = "development"
+}
+
+variable "kubeconfig" {
+  default = "~/.kube/tutorial_config"
+}
+
+variable "kube_ctx_alias" {
+  default = "lambdaTutorial"
+}
+
+variable "aws_profile_name" {
+  default = "default"
 }
