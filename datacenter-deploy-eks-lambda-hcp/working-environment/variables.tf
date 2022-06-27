@@ -74,7 +74,13 @@ variable "cluster_service_account_name" {
   description = "Service account name for the Pod"
 }
 
+variable "kubeconfig" {
+  type = string
+  description = "~/.kube/tutorial_config"
+}
+
 variable "gossip_key" {}
 
 variable "consul_datacenter" {}
 variable "kube_cluster_ca" {}
+variable "kube_ctx_alias" {}

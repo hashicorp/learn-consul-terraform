@@ -20,4 +20,6 @@ module "kubernetes_resources" {
   working-pod-name             = var.pod_name
   consul_datacenter            = var.consul_datacenter
   kube_cluster_ca              = var.kube_cluster_ca
+  kubeconfig                   = var.kubeconfig
+  kube_ctx_alias               = var.kube_ctx_alias
 }
