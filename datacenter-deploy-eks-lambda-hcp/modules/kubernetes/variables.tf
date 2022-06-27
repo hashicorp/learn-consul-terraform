@@ -8,17 +8,16 @@ variable "startup_options" {
     consul_k8s_version = "0.44.0"
     amazonlinux        = "amazonlinux:2"
     yq_version         = "v4.20.2"
-    hashi_repo = "https://releases.hashicorp.com"
-    hashi_yum_url = "https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo"
+    hashi_repo         = "https://releases.hashicorp.com"
+    hashi_yum_url      = "https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo"
     github_content_url = "https://raw.githubusercontent.com"
-    kube_url = "https://dl.k8s.io/release"
-    github_url = "https://github.com"
+    kube_url           = "https://dl.k8s.io/release"
+    github_url         = "https://github.com"
   }
 }
 
-
 variable "api_gateway_version" {
-  type = string
+  type    = string
   default = "0.2.1"
 }
 
@@ -88,7 +87,7 @@ variable "cluster_name" {
 }
 
 variable "cluster_region" {
-  type = string
+  type        = string
   description = "Region of EKS cluster."
 }
 
@@ -108,6 +107,34 @@ variable "startup_script_config_map_options" {
     startup_command      = "/startup/startup.sh"
     volume_name          = "startup"
     template_file_name   = "template_scripts/startup-script.tftpl"
+  }
+}
+
+variable "shutdown_script_config_map_options" {
+  type        = any
+  description = "Configuration settings for the kube configmap for the startup script"
+  default = {
+    file_permissions     = "0744"
+    config_map_name      = "tutorial-shutdown-scripts"
+    config_map_file_name = "shutdown.sh"
+    mount_path           = "/shutdown"
+    shutdown_command     = "/shutdown/shutdown.sh"
+    volume_name          = "shutdown"
+    template_file_name   = "template_scripts/shutdown-script.tftpl"
+  }
+}
+
+variable "startup_init_script_config_map_options" {
+  type        = any
+  description = "Configuration settings for the kube configmap for the startup script"
+  default = {
+    file_permissions     = "0744"
+    config_map_name      = "tutorial-startup-init"
+    config_map_file_name = "startup-init.sh"
+    mount_path           = "/startup-init"
+    startup_init_command = "/startup-init/startup-init.sh"
+    volume_name          = "startup-init"
+    template_file_name   = "template_scripts/startup-init.tftpl"
   }
 }
 
@@ -202,12 +229,12 @@ variable "hashicups_volume_and_mount_config" {
       file_permissions    = "0755"
     }
     nginx = {
-      config_map_name = "nginx.yaml"
+      config_map_name     = "nginx.yaml"
       config_map_key      = "config"
       config_map_filename = "nginx.yaml"
-      mount_path = "/hashicups/app"
-      volume_name = "nginx"
-      file_permission = "0755"
+      mount_path          = "/hashicups/app"
+      volume_name         = "nginx"
+      file_permission     = "0755"
 
     }
   }
@@ -228,19 +255,19 @@ variable "aws_profile_config_map_options" {
 }
 
 variable "service_variables" {
-  type    = any
+  type = any
   default = {
     payments = {
-      has_empty_dir  = false
-      has_vol        = false
-      has_cm         = false
+      has_empty_dir = false
+      has_vol       = false
+      has_cm        = false
       ServiceAccount = {
         sa_name                         = "payments"
         automount_service_account_token = true
       }
       Service = {
         spec_type = ""
-        ports     = [
+        ports = [
           {
             pname     = "http"
             pprotocol = "TCP"
@@ -257,16 +284,16 @@ variable "service_variables" {
       }
     }
     public-api = {
-      has_empty_dir  = false
-      has_cm         = false
-      has_vol        = false
+      has_empty_dir = false
+      has_cm        = false
+      has_vol       = false
       ServiceAccount = {
         sa_name                         = "public-api"
         automount_service_account_token = true
       }
       Service = {
         spec_type = "ClusterIP"
-        ports     = [
+        ports = [
           {
             #pname     = null
             #pprotocol = null
@@ -283,16 +310,16 @@ variable "service_variables" {
       }
     }
     product-api = {
-      has_empty_dir  = false
-      has_cm         = true
-      has_vol        = true
+      has_empty_dir = false
+      has_cm        = true
+      has_vol       = true
       ServiceAccount = {
         sa_name                         = "product-api"
         automount_service_account_token = true
       }
       Service = {
         spec_type = ""
-        ports     = [
+        ports = [
           {
             pname     = "http"
             pprotocol = "TCP"
@@ -315,16 +342,16 @@ variable "service_variables" {
       }
     }
     postgres = {
-      has_cm         = false
-      has_vol        = true
-      has_empty_dir  = true
+      has_cm        = false
+      has_vol       = true
+      has_empty_dir = true
       ServiceAccount = {
         sa_name                         = "postgres"
         automount_service_account_token = true
       }
       Service = {
         spec_type = "ClusterIP"
-        ports     = [
+        ports = [
           {
             ptarget = 5432
             pport   = 5432
@@ -340,16 +367,16 @@ variable "service_variables" {
 
     }
     frontend = {
-      has_cm         = false
-      has_vol        = false
-      has_empty_dir  = false
+      has_cm        = false
+      has_vol       = false
+      has_empty_dir = false
       ServiceAccount = {
         sa_name                         = "frontend"
         automount_service_account_token = true
       }
       Service = {
         spec_type = "ClusterIP"
-        ports     = [
+        ports = [
           {
             ptarget = 3000
             pport   = 3000
@@ -364,16 +391,16 @@ variable "service_variables" {
       }
     }
     nginx = {
-      has_cm         = true
-      has_vol        = true
-      has_empty_dir  = false
+      has_cm        = true
+      has_vol       = true
+      has_empty_dir = false
       ServiceAccount = {
         sa_name                         = "nginx"
         automount_service_account_token = true
       }
       Service = {
         spec_type = "ClusterIP"
-        ports     = [
+        ports = [
           {
             ptarget = 80
             pport   = 80
@@ -471,3 +498,7 @@ variable "working-pod-container_port" {
 }
 
 variable "kube_cluster_ca" {}
+
+variable "kubeconfig" {}
+
+variable "kube_ctx_alias" {}
