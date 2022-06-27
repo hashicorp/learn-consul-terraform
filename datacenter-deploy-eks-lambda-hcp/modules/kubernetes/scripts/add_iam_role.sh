@@ -2,6 +2,7 @@
 
 set -e
 
+export KUBECONFIG=~/.kube/tutorial_config
 # Add the IAM Role to the aws-auth config in order to use kubectl while inside the pod.
 # The IAM Role variable preserves the YAML formatting in its partial to fed to awk
 # awk merges this partial block into the existing aws-auth config.
