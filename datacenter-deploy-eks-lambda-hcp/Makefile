@@ -15,8 +15,7 @@ destroy:
 .PHONE debug:
 debug:
 	terraform -chdir=working-environment destroy -auto-approve
-	terraform -chdir=working-environment state rm module.kubernetes_resources.null_resource.cleanup
-	
+
 
 .PHONY work:
 work:
