@@ -24,11 +24,47 @@ resource "kubernetes_config_map" "startup_script" {
       yq_version         = var.startup_options.yq_version
       aws_region         = var.cluster_region
       cluster_name       = var.cluster_name
-      hashi_repo        = var.startup_options.hashi_repo
-      hashi_yum_url     = var.startup_options.hashi_yum_url
+      hashi_repo         = var.startup_options.hashi_repo
+      hashi_yum_url      = var.startup_options.hashi_yum_url
       github_content_url = var.startup_options.github_content_url
-      github_url        = var.startup_options.github_url
-      kube_url          = var.startup_options.kube_url
+      github_url         = var.startup_options.github_url
+      kube_url           = var.startup_options.kube_url
+    })
+  }
+}
+
+resource "kubernetes_config_map" "startup_init_script" {
+  metadata {
+    name = var.startup_init_script_config_map_options.config_map_name
+  }
+  data = {
+    (var.startup_init_script_config_map_options.config_map_file_name) = templatefile("${path.module}/${var.startup_init_script_config_map_options.template_file_name}", {
+
+      kubectl_version    = var.startup_options.kubectl_version
+      helm_version       = var.startup_options.helm_version
+      consul_version     = var.startup_options.consul_version
+      consul_k8s_version = var.startup_options.consul_k8s_version
+      yq_version         = var.startup_options.yq_version
+      aws_region         = var.cluster_region
+      cluster_name       = var.cluster_name
+      hashi_repo         = var.startup_options.hashi_repo
+      hashi_yum_url      = var.startup_options.hashi_yum_url
+      github_content_url = var.startup_options.github_content_url
+      github_url         = var.startup_options.github_url
+      kube_url           = var.startup_options.kube_url
+    })
+  }
+}
+
+
+resource "kubernetes_config_map" "shutdown_script" {
+  metadata {
+    name = var.shutdown_script_config_map_options.config_map_name
+  }
+  data = {
+    (var.shutdown_script_config_map_options.config_map_file_name) = templatefile("${path.module}/${var.shutdown_script_config_map_options.template_file_name}", {
+      aws_region   = var.cluster_region
+      cluster_name = var.cluster_name
     })
   }
 }
@@ -69,10 +105,10 @@ resource "kubernetes_config_map" "calculated_consul_values" {
 
   }
   data = {
-      # This is picking up from the working-environment dir.
-      # I don't like hardcoding this path, but can fix this later.
-      config = file("./rendered/values.yaml")
-    }
+    # This is picking up from the working-environment dir.
+    # I don't like hardcoding this path, but can fix this later.
+    config = file("./rendered/values.yaml")
+  }
 }
 resource "kubernetes_config_map" "crd_proxydefault" {
   metadata {
@@ -122,15 +158,6 @@ resource "kubernetes_config_map" "crd_serviceresolver" {
   }
   data = {
     config = file("${path.module}/hashicups/crds/service-resolver/payments-lambda.yaml")
-  }
-}
-resource "kubernetes_config_map" "cleanupcrds" {
-
-  metadata {
-    name = var.cleanup_crd_options.config_map_name
-  }
-  data = {
-    config = file("${path.module}/scripts/cleanup_crds.sh")
   }
 }
 
