@@ -27,4 +27,4 @@ spec:
             - containerPort: 3000
           env:
             - name: NEXT_PUBLIC_PUBLIC_API_URL
-              value: "http://localhost:8080"
+              value: "/"
