@@ -55,5 +55,7 @@ gossip_key="${module.resources.resources.consul_gossip_key}"
 kube_context="default"
 kube_cluster_ca="${module.resources.resources.kube_cluster_ca}"
 role_arn="${module.resources.resources.kube_service_account_associated_iam_role}"
+kubeconfig="${var.tutorial_config.kubeconfig}"
+kube_ctx_alias="${var.tutorial_config.kube_ctx_alias}"
 CONFIGURATION
 }

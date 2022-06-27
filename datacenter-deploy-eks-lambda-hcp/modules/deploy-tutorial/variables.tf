@@ -52,6 +52,8 @@ variable "tutorial_config" {
     hvn_peering_identifier  = string
     eks_cluster_stage       = string
     hcp_hvn                 = string
+    kubeconfig              = string
+    kube_ctx_alias          = string
   })
   description = "Object definition for tutorial configuration."
 }
