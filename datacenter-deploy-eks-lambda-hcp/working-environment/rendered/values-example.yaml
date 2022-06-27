@@ -1,0 +1,64 @@
+global:
+  enabled: false
+  name: consul
+  datacenter: dc1-vhxns
+  image: hashicorp/consul:1.12.2
+  acls:
+    acls:
+    manageSystemACLs: true
+    bootstrapToken:
+      secretName: consul-bootstrap-token
+      secretKey: token
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    caCert:
+      secretName: consul-ca-cert
+      secretKey: tls.crt
+  gossipEncryption:
+    secretName: consul-gossip-key
+    secretKey: key
+
+externalServers:
+  enabled: true
+  hosts:
+  - dc1-vhxns.private.consul.223350f5-f0b9-4d89-959d-aa8eab3184e5.aws.hashicorp.cloud
+  httpsPort: 443
+  useSystemRoots: true
+  k8sAuthMethodHost: https://4B15493E03D855454083C05F0CFCD1BC.gr7.us-west-2.eks.amazonaws.com
+
+server:
+  enabled: false
+
+client:
+  enabled: true
+  grpc: true
+  join:
+  - dc1-vhxns.private.consul.223350f5-f0b9-4d89-959d-aa8eab3184e5.aws.hashicorp.cloud
+
+  extraConfig: |
+    {
+      "connect": {
+        "enable_serverless_plugin": true
+      }
+    }
+
+terminatingGateways:
+  enabled: true
+  defaults:
+    replicas: 1
+
+connectInject:
+  enabled: true
+  envoyExtraArgs: "--component-log-level upstream:debug,http:debug,router:debug,config:debug"
+  aclBindingRuleSelector: ""
+
+controller:
+  enabled: true
+
+# Custom Resource Defintitions for API Gateway must be present in Kubernetes before Consul is installed.
+apiGateway:
+  enabled: true
+  image: "hashicorp/consul-api-gateway:0.2.1"
+  managedGatewayClass:
+    serviceType: LoadBalancer
