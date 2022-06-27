@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
+
 yum update -y
 yum install -y yum-utils && \
 yum-config-manager --add-repo ${hashi_yum_url}
 yum install -y nano emacs vim
 yum install -y openssl curl jq tar unzip wget awscli
+
 wget ${github_url}/mikefarah/yq/releases/download/${yq_version}/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
 
 curl -LO ${kube_url}/${kubectl_version}/bin/linux/amd64/kubectl && \
@@ -30,22 +32,4 @@ rm -f /consul
 
 aws eks --region ${aws_region} update-kubeconfig --name ${cluster_name} --alias ${cluster_name}
 
-
-CONSUL_STATUS=$(consul-k8s status | grep -io "couldn't find consul installation")
-if  [[ $${CONSUL_STATUS} == "couldn't find consul installation" ]]
-    then
-        # The container can be rebuilt, but we only want to run this part of the container bootstrap when consul isn't installed.
-        consul-k8s install -config-file=/helm/config -namespace=default -auto-approve -timeout=3m
-        # Deploy HashiCups pods
-        kubectl apply -f /hashicups/app/ -f /kube-crds/proxy-defaults.yaml
-        kubectl apply $(ls /kube-crds/servicedefaults*.yaml | awk ' { print " -f " $1 } ')
-        kubectl apply $(ls /kube-crds/serviceintentions*.yaml | awk ' { print " -f " $1 } ')
-        kubectl apply -f /api-gateway/consul-api-gateway.yaml \
-            && kubectl wait --for=condition=ready gateway/api-gateway --timeout=90s
-        kubectl apply --filename ../api-gw/routes.yaml
-        sleep infinity
-fi
-
-
-# Sleep forever so the pod runs indefinitely
 sleep infinity
