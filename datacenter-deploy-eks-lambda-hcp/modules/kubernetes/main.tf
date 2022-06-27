@@ -6,9 +6,9 @@ locals {
         name = "consul-bootstrap-token"
       }
       secret_type = "Opaque"
-      data        = {
+      data = {
         key_name = "token"
-        value = var.consul_http_token
+        value    = var.consul_http_token
       }
     }
     consul-ca_cert = {
@@ -16,9 +16,9 @@ locals {
         name = "consul-ca-cert"
       }
       secret_type = "Opaque"
-      data        = {
+      data = {
         key_name = "tls.crt"
-        value = base64decode(var.consul_ca)
+        value    = base64decode(var.consul_ca)
       }
     }
     consul-gossip_key = {
@@ -26,9 +26,9 @@ locals {
         name = "consul-gossip-key"
       }
       secret_type = "Opaque"
-      data        = {
+      data = {
         key_name = "key"
-        value = var.consul_gossip_key
+        value    = var.consul_gossip_key
       }
     }
   }
@@ -72,6 +72,7 @@ locals {
     sdpm = "servicedefaults-payments.yaml"
     sdpg = "servicedefaults-postgres.yaml"
     sdpa = "servicedefaults-product-api.yaml"
+    sife = "serviceintentions-frontend.yaml"
     sipm = "serviceintentions-payments.yaml"
     sipg = "serviceintentions-postgres.yaml"
     sipa = "serviceintentions-product-api.yaml"
@@ -82,17 +83,17 @@ locals {
     gbpd = "proxy-defaults.yaml"
   }
   api_gw_cmaps = {
-    gw = "consul-api-gateway.yaml"
+    gw     = "consul-api-gateway.yaml"
     routes = "consul-api-gateway-routes.yaml"
   }
 }
 
-data "kustomization" "gateway_crds" {
+data "kustomization_build" "gateway_crds" {
   path = "github.com/hashicorp/consul-api-gateway/config/crd?ref=v${var.api_gateway_version}"
 }
 resource "kustomization_resource" "gateway_crds" {
-  for_each = data.kustomization.gateway_crds.ids
-  manifest = data.kustomization.gateway_crds.manifests[each.value]
+  for_each = data.kustomization_build.gateway_crds.ids
+  manifest = data.kustomization_build.gateway_crds.manifests[each.value]
 }
 
 resource "kubernetes_secret" "consul_secrets" {
@@ -213,10 +214,10 @@ resource "kubernetes_deployment" "workingEnvironment" {
           }
         }
         volume {
-          name = var.cleanup_crd_options.volume_name
+          name = var.shutdown_script_config_map_options.volume_name
           config_map {
-            name         = var.cleanup_crd_options.config_map_name
-            default_mode = var.cleanup_crd_options.file_permissions
+            name         = var.shutdown_script_config_map_options.config_map_name
+            default_mode = var.shutdown_script_config_map_options.file_permissions
           }
         }
         volume {
@@ -240,6 +241,13 @@ resource "kubernetes_deployment" "workingEnvironment" {
             default_mode = var.consul_values_config_map_options.file_permissions
           }
         }
+        volume {
+          name = var.startup_init_script_config_map_options.volume_name
+          config_map {
+            name         = var.startup_init_script_config_map_options.config_map_name
+            default_mode = var.startup_init_script_config_map_options.file_permissions
+          }
+        }
         # Hashicups Volumes
         volume {
           name = "hashicups"
@@ -250,7 +258,7 @@ resource "kubernetes_deployment" "workingEnvironment" {
                 config_map {
                   name = sources.value.config_map_filename
                   items {
-                    key = sources.value.config_map_key
+                    key  = sources.value.config_map_key
                     path = sources.value.config_map_filename
                   }
                 }
@@ -269,7 +277,7 @@ resource "kubernetes_deployment" "workingEnvironment" {
                 config_map {
                   name = sources.value
                   items {
-                    key = "config"
+                    key  = "config"
                     path = sources.value
                   }
                 }
@@ -288,7 +296,7 @@ resource "kubernetes_deployment" "workingEnvironment" {
                 config_map {
                   name = sources.value
                   items {
-                    key = "config"
+                    key  = "config"
                     path = sources.value
                   }
                 }
@@ -303,12 +311,19 @@ resource "kubernetes_deployment" "workingEnvironment" {
           dynamic "env" {
             for_each = local.working_pod_env_vars
             content {
-              name = env.value.name
+              name  = env.value.name
               value = env.value.value
             }
           }
           name  = var.working-pod-name
           image = var.startup_options.amazonlinux
+          lifecycle {
+            pre_stop {
+              exec {
+                command = [var.shutdown_script_config_map_options.shutdown_command]
+              }
+            }
+          }
           volume_mount {
             mount_path = var.consul_values_config_map_options.mount_path
             name       = var.consul_values_config_map_options.volume_name
@@ -318,23 +333,18 @@ resource "kubernetes_deployment" "workingEnvironment" {
             name       = "hashicups"
           }
           volume_mount {
-            mount_path ="/api-gateway"
+            mount_path = "/api-gateway"
             name       = "consulapigateway"
-            read_only = true
+            read_only  = true
           }
           volume_mount {
             mount_path = "/kube-crds"
             name       = "consulcrds"
           }
           volume_mount {
-            mount_path = var.cleanup_crd_options.mount_path
-            name       = var.cleanup_crd_options.volume_name
-          }
-          volume_mount {
             mount_path = var.startup_script_config_map_options.mount_path
             name       = var.startup_script_config_map_options.volume_name
           }
-
           volume_mount {
             mount_path = var.aws_creds_config_map_options.mount_path
             name       = var.aws_creds_config_map_options.volume_name
@@ -349,21 +359,54 @@ resource "kubernetes_deployment" "workingEnvironment" {
           }
           command = [var.startup_script_config_map_options.startup_command]
         }
+        init_container {
+          name  = "${var.working-pod-name}-init"
+          image = var.startup_options.amazonlinux
+          dynamic "env" {
+            for_each = local.working_pod_env_vars
+            content {
+              name  = env.value.name
+              value = env.value.value
+            }
+          }
+          volume_mount {
+            mount_path = "/hashicups/app"
+            name       = "hashicups"
+          }
+          volume_mount {
+            mount_path = "/api-gateway"
+            name       = "consulapigateway"
+            read_only  = true
+          }
+          volume_mount {
+            mount_path = "/kube-crds"
+            name       = "consulcrds"
+          }
+          volume_mount {
+            mount_path = var.startup_init_script_config_map_options.mount_path
+            name       = var.startup_init_script_config_map_options.volume_name
+          }
+          volume_mount {
+            mount_path = var.consul_values_config_map_options.mount_path
+            name       = var.consul_values_config_map_options.volume_name
+          }
+          volume_mount {
+            mount_path = var.aws_profile_config_map_options.mount_path
+            name       = var.aws_profile_config_map_options.volume_name
+            sub_path   = var.aws_profile_config_map_options.config_map_filename
+            read_only  = true
+          }
+          command = [var.startup_init_script_config_map_options.startup_init_command]
+        }
       }
+
     }
 
   }
 
-  # The cleanup script on destroy event should finish before the tutorial pod is removed.
-  depends_on = [null_resource.cleanup, kubernetes_config_map.startup_script, kubernetes_config_map.aws_cred_profile, kubernetes_config_map.aws_profile_config]
+  depends_on = [kubernetes_config_map.calculated_consul_values, kustomization_resource.gateway_crds, kubernetes_config_map.aws_cred_profile, kubernetes_config_map.aws_profile_config]
 }
 
-resource "time_sleep" "waiting_for_pod" {
-  create_duration = "30s"
-  depends_on = [
-    kubernetes_deployment.workingEnvironment
-  ]
-}
 
 # Render the IAM role file partial to add to the aws-auth configmap
 resource "local_file" "add_iam_role" {
@@ -378,23 +421,12 @@ resource "local_file" "add_iam_role" {
 resource "null_resource" "add_iam_role" {
 
   provisioner "local-exec" {
+    environment = {
+      KUBECONFIG  = var.kubeconfig
+      KUBECONTEXT = var.kube_ctx_alias
+    }
     command = "bash ${path.module}/scripts/add_iam_role.sh"
   }
   depends_on = [local_file.add_iam_role]
 
-}
-
-resource "null_resource" "cleanup" {
-  provisioner "local-exec" {
-    when = destroy
-    command = "bash ${path.module}/scripts/cleanup_crds.sh"
-  }
-  provisioner "local-exec" {
-    when = destroy
-    command = "kubectl get deployments | awk {'print $1'} | grep -v NAME | grep -v tutorial | xargs kubectl delete deployments"
-  }
-  provisioner "local-exec" {
-    when = destroy
-    command = "kubectl get pods -l app=tutorial | awk {'print $1'} | grep -v NAME | xargs -I {} kubectl exec {} -- consul-k8s uninstall -auto-approve"
-  }
 }
