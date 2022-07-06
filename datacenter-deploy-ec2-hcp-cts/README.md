@@ -1,4 +1,4 @@
-# Consul-terraform-sync example
+# Consul-terraform-sync on EC2 instance + HCP
 
 ## Description
 
@@ -16,6 +16,7 @@ The Terraform code in the subfolders contained here deploys the following:
     - Ubuntu Linux 18.04
     - Consul client connecting to the HCP Consul cluster
     - Consul-terraform-sync binary installed 
+    - HashiCorp example services (_counting_,_dashboard_) binaries installed
 
 ## Prerequisites
 
@@ -55,3 +56,7 @@ Once ready, you can access your EC2 instance by the following command in the `2-
 ```shell
 ssh ubuntu@$(terraform output -raw ec2_client) -i ./consul-client.pem 
 ```
+
+## Credits
+
+This work is a modification of the `datacenter-deploy-ec2-hcp` scenario in the same repository.
