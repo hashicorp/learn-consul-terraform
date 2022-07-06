@@ -16,6 +16,7 @@ The Terraform code in the subfolders contained here deploys the following:
     - Ubuntu Linux 18.04
     - Consul client connecting to the HCP Consul cluster
     - Consul-terraform-sync binary installed 
+    - HashiCorp example services (_counting_,_dashboard_) binaries installed
 
 ## Prerequisites
 
