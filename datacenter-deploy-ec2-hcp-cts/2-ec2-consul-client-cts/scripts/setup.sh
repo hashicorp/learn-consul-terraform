@@ -49,6 +49,14 @@ setup_consul() {
   jq '.bind_addr = "{{ GetPrivateInterfaces | include \"network\" \"'${vpc_cidr}'\" | attr \"address\" }}"' client.temp.3 >/etc/consul.d/client.json
 }
 
+setup_services() {
+  curl -L -o counting-service.zip https://github.com/hashicorp/demo-consul-101/releases/download/v0.0.5/counting-service_linux_amd64.zip
+  curl -L -o dashboard-service.zip https://github.com/hashicorp/demo-consul-101/releases/download/v0.0.5/dashboard-service_linux_amd64.zip
+  sudo unzip counting-service.zip -d /usr/local/bin
+  sudo unzip dashboard-service.zip -d /usr/local/bin
+  rm counting-service.zip dashboard-service.zip
+}
+
 cd /home/ubuntu/
 
 echo "${consul_service}" | base64 -d >consul.service
@@ -62,5 +70,7 @@ start_service "consul"
 
 # nomad and consul service is type simple and might not be up and running just yet.
 sleep 10
+
+setup_services
 
 echo "done"
