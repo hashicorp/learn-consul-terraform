@@ -1,4 +1,4 @@
-# Consul-terraform-sync example
+# Consul-terraform-sync on EC2 instance + HCP
 
 ## Description
 
@@ -56,3 +56,7 @@ Once ready, you can access your EC2 instance by the following command in the `2-
 ```shell
 ssh ubuntu@$(terraform output -raw ec2_client) -i ./consul-client.pem 
 ```
+
+## Credits
+
+This work is a modification of the `datacenter-deploy-ec2-hcp` scenario in the same repository.
