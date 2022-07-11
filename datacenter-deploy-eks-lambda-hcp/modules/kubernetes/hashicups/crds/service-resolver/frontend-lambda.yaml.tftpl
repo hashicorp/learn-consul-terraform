@@ -1,7 +1,7 @@
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceResolver
 metadata:
-  name: payments
+  name: frontend
 spec:
   redirect:
-    service: payments-lambda
+    service: frontend-lambda
