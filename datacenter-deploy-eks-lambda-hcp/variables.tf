@@ -35,7 +35,7 @@ variable "hcp_consul_tier" {
 }
 
 variable "kubeconfig" {
-  default = "~/.kube/tutorial_config"
+  default = "tutorial_config"
 }
 
 variable "kube_ctx_alias" {

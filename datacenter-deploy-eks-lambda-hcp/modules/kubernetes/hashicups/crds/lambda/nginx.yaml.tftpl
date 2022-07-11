@@ -1,0 +1,10 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: nginx-frontend-lambda
+spec:
+  sources:
+    - name: nginx
+      action: allow
+  destination:
+    name: ${DESTINATION_NAME}

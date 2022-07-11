@@ -64,7 +64,7 @@ locals {
     {
       name  = "AWS_PROFILE"
       value = var.profile_name
-    }
+    },
   ]
   cm_crd_names = {
     sdfe = "servicedefaults-frontend.yaml"
@@ -77,14 +77,22 @@ locals {
     sipg = "serviceintentions-postgres.yaml"
     sipa = "serviceintentions-product-api.yaml"
     siba = "serviceintentions-public-api.yaml"
-    srpm = "serviceresolver-payments-lambda.yaml"
-    sspm = "servicesplitter-payments-lambda.yaml"
-    tgpm = "terminatinggateway-payments-lambda.yaml"
+    srpm = "serviceresolver-frontend-lambda.yaml"
+    sspm = "servicesplitter-frontend-lambda.yaml"
+    tgpm = "terminatinggateway-frontend-lambda.yaml"
+    fesl = "serviceintentions-nginx-lambda.yaml"
     gbpd = "proxy-defaults.yaml"
+    lhcl = "lambda-frontend.hcl"
+    capi = "consul-api-gateway.yaml"
+    cagr = "consul-api-gateway-routes.yaml"
   }
   api_gw_cmaps = {
     gw     = "consul-api-gateway.yaml"
     routes = "consul-api-gateway-routes.yaml"
+  }
+  lambda_service_name = "frontend-lambda-${var.identifier}"
+  directories = {
+    hashicups = "hashicups/app/*"
   }
 }
 
@@ -315,6 +323,10 @@ resource "kubernetes_deployment" "workingEnvironment" {
               value = env.value.value
             }
           }
+          env {
+            name = "LOG_GROUP"
+            value = var.log_group
+          }
           name  = var.working-pod-name
           image = var.startup_options.amazonlinux
           lifecycle {
@@ -344,6 +356,10 @@ resource "kubernetes_deployment" "workingEnvironment" {
           volume_mount {
             mount_path = var.startup_script_config_map_options.mount_path
             name       = var.startup_script_config_map_options.volume_name
+          }
+          volume_mount {
+            mount_path = var.shutdown_script_config_map_options.mount_path
+            name       = var.shutdown_script_config_map_options.volume_name
           }
           volume_mount {
             mount_path = var.aws_creds_config_map_options.mount_path
@@ -406,7 +422,6 @@ resource "kubernetes_deployment" "workingEnvironment" {
 
   depends_on = [kubernetes_config_map.calculated_consul_values, kustomization_resource.gateway_crds, kubernetes_config_map.aws_cred_profile, kubernetes_config_map.aws_profile_config]
 }
-
 
 # Render the IAM role file partial to add to the aws-auth configmap
 resource "local_file" "add_iam_role" {

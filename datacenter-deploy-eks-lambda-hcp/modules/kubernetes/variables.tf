@@ -1,21 +1,3 @@
-variable "startup_options" {
-  type        = any
-  description = "Versions of software used in the startup script"
-  default = {
-    kubectl_version    = "v1.22.4"
-    helm_version       = "v3.7.1"
-    consul_version     = "1.12.2"
-    consul_k8s_version = "0.44.0"
-    amazonlinux        = "amazonlinux:2"
-    yq_version         = "v4.20.2"
-    hashi_repo         = "https://releases.hashicorp.com"
-    hashi_yum_url      = "https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo"
-    github_content_url = "https://raw.githubusercontent.com"
-    kube_url           = "https://dl.k8s.io/release"
-    github_url         = "https://github.com"
-  }
-}
-
 variable "api_gateway_version" {
   type    = string
   default = "0.2.1"
@@ -71,6 +53,11 @@ variable "kube_context" {
   description = "The name of the kube context to set in the config file for kubectl"
 }
 
+variable "log_group" {
+  type = string
+  description = "Name of the cloudwatch log group for Lambda registrator"
+}
+
 variable "profile_name" {
   type        = string
   description = "Name of the AWS Profile"
@@ -94,6 +81,24 @@ variable "cluster_region" {
 variable "cluster_service_account_name" {
   type        = string
   description = "Name of the Kubernetes service account mapped to the IAM Role."
+}
+
+variable "startup_options" {
+  type        = any
+  description = "Versions of software used in the startup script"
+  default = {
+    kubectl_version    = "v1.22.4"
+    helm_version       = "v3.7.1"
+    consul_version     = "1.12.2"
+    consul_k8s_version = "0.44.0"
+    amazonlinux        = "amazonlinux:2"
+    yq_version         = "v4.20.2"
+    hashi_repo         = "https://releases.hashicorp.com"
+    hashi_yum_url      = "https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo"
+    github_content_url = "https://raw.githubusercontent.com"
+    kube_url           = "https://dl.k8s.io/release"
+    github_url         = "https://github.com"
+  }
 }
 
 variable "startup_script_config_map_options" {
@@ -138,7 +143,7 @@ variable "startup_init_script_config_map_options" {
   }
 }
 
-variable "consul_datacenter" {}
+
 
 variable "consul_image" {
   default = "hashicorp/consul:1.12.2"
@@ -295,8 +300,6 @@ variable "service_variables" {
         spec_type = "ClusterIP"
         ports = [
           {
-            #pname     = null
-            #pprotocol = null
             ptarget = 8080
             pport   = 8080
           }
@@ -412,45 +415,44 @@ variable "service_variables" {
         cm_data = {
           config = <<EOF
           events {}
-              http {
-                include /etc/nginx/conf.d/*.conf;
-                 server {
-                    server_name localhost;
-                    listen 80 default_server;
-                    proxy_http_version 1.1;
-                    proxy_set_header Upgrade $http_upgrade;
-                    proxy_set_header Connection 'upgrade';
-                    proxy_set_header Host $host;
-                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                    proxy_temp_file_write_size 64k;
-                    proxy_connect_timeout 10080s;
-                    proxy_send_timeout 10080;
-                    proxy_read_timeout 10080;
-                    proxy_buffer_size 64k;
-                    proxy_buffers 16 32k;
-                    proxy_busy_buffers_size 64k;
-                    proxy_redirect off;
-                    proxy_request_buffering off;
-                    proxy_buffering off;
-                    location / {
-                      proxy_pass http://127.0.0.1:3000;
-                    }
-                    location ^~ /hashicups {
-                      rewrite ^/hashicups(.*)$ /$1 last;
-                    }
-                    location /static {
-                      proxy_cache_valid 60m;
-                      proxy_pass http://127.0.0.1:3000;
-                    }
-                    location /api {
-                      proxy_pass http://127.0.0.1:8080;
-                    }
-                    error_page   500 502 503 504  /50x.html;
-                    location = /50x.html {
-                      root   /usr/share/nginx/html;
-                    }
+          http {
+            include /etc/nginx/conf.d/*.conf;
+            server {
+              server_name localhost;
+               listen 80 default_server;
+               proxy_http_version 1.1;
+               proxy_set_header Upgrade $http_upgrade;
+               proxy_set_header Connection 'upgrade';
+               proxy_set_header Host $host;
+               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+               proxy_temp_file_write_size 64k;
+               proxy_connect_timeout 10080s;
+               proxy_send_timeout 10080;
+               proxy_read_timeout 10080;
+               proxy_buffer_size 64k;
+               proxy_buffers 16 32k;
+               proxy_busy_buffers_size 64k;
+               proxy_redirect off;
+               proxy_request_buffering off;
+               proxy_buffering off;
+               location / {
+                  proxy_pass http://127.0.0.1:3000;
+               }
+               location ^~ /hashicups {
+                  rewrite ^/hashicups(.*)$ /$1 last;
+               }
+               location /static {
+                  proxy_pass http://127.0.0.1:3000;
+               }
+               location /api {
+                  proxy_pass http://127.0.0.1:8080;
+               }
+               error_page   500 502 503 504  /50x.html;
+               location = /50x.html {
+                  root   /usr/share/nginx/html;
                   }
                 }
+              }
           EOF
         }
       }
@@ -489,16 +491,34 @@ variable "container_interpreter" {
   default = ["/bin/bash", "-c"]
 }
 
-variable "working-pod-service_account" {}
+variable "working-pod-service_account" {
+  type = string
+}
 
-variable "working-pod-name" {}
+variable "working-pod-name" {
+  type = string
+}
 
 variable "working-pod-container_port" {
   default = 8080
 }
 
-variable "kube_cluster_ca" {}
+variable "kube_cluster_ca" {
+  type = string
+}
 
-variable "kubeconfig" {}
+variable "kubeconfig" {
+  type = string
+}
 
-variable "kube_ctx_alias" {}
+variable "kube_ctx_alias" {
+  type = string
+}
+
+variable "identifier" {
+  type = string
+}
+
+variable "consul_datacenter" {
+  type = string
+}

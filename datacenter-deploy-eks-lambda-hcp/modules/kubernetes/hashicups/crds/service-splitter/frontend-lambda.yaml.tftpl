@@ -5,6 +5,6 @@ metadata:
 spec:
   splits:
     - weight: 100
-      service: frontend-lambda
+      service: ${DESTINATION_SERVICE}
     - weight: 0
       service: frontend

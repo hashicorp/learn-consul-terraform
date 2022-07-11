@@ -57,5 +57,10 @@ kube_cluster_ca="${module.resources.resources.kube_cluster_ca}"
 role_arn="${module.resources.resources.kube_service_account_associated_iam_role}"
 kubeconfig="${var.tutorial_config.kubeconfig}"
 kube_ctx_alias="${var.tutorial_config.kube_ctx_alias}"
+vpc_id="${module.vpc.vpc_id}"
+vpc_subnets=${replace("[%{ for s in module.vpc.private_subnets }\"${s}\",%{endfor}]", ",]", "]")}
+vpc_security_group_id="${module.vpc.default_security_group_id}"
+consul_public_endpoint="${module.resources.resources.consul_public_endpoint}"
+identifier="${var.tutorial_config.random_identifier}"
 CONFIGURATION
 }

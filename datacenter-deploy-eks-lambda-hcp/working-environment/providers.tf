@@ -8,7 +8,15 @@ terraform {
       source = "kbst/kustomization"
       version = "0.8.2"
     }
+    aws = {
+      source = "hashicorp/aws"
+      version = ">3.0.0"
+    }
   }
+}
+
+provider "aws" {
+  region = var.cluster_region
 }
 
 provider "kubernetes" {

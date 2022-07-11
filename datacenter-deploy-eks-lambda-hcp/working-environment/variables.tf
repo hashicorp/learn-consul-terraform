@@ -49,6 +49,20 @@ variable "kube_context" {
   description = "Kube context"
 }
 
+variable "vpc_subnets" {}
+
+variable "vpc_security_group_id" {}
+
+variable "consul_public_endpoint" {}
+
+variable "ssm_tier" {
+  default = "Advanced"
+}
+
+variable "ssm_type" {
+  default = "SecureString"
+}
+
 variable "profile_name" {
   type = string
   description = "Profile name for AWS credentials"
@@ -84,3 +98,5 @@ variable "gossip_key" {}
 variable "consul_datacenter" {}
 variable "kube_cluster_ca" {}
 variable "kube_ctx_alias" {}
+variable "vpc_id" {}
+variable "identifier" {}

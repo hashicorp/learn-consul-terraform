@@ -7,6 +7,7 @@ output "consul_values" {
     consul_public_endpoint  = module.resources.resources.consul_public_endpoint
     kube_cluster_endpoint   = module.resources.resources.kube_cluster_endpoint
     kube_cluster_name       = module.resources.resources.kube_cluster_name
+    vpc_security_group_id   = module.vpc.default_security_group_id
   }
   sensitive = true
 }

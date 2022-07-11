@@ -1,0 +1,9 @@
+service ${SERVICE_NAME} {
+  policy = "write"
+  intentions = "read"
+}
+
+service "frontend" {
+  policy = "write"
+  intentions = "read"
+}

@@ -6,6 +6,8 @@ locals {
   unique_consul_datacenter = "dc1-${local.rand}"
   unique_vpc               = "${var.tutorial_networking.vpc.name}-${local.rand}"
   unique_kube_cluster_name = "${var.eks_cluster_configuration.name}-${local.rand}"
+  kubeconfig_path = pathexpand("~/.kube")
+  kubeconfig_file = "${local.kubeconfig_path}/${var.kubeconfig}"
 
   tutorial_config = {
     aws_account_id     = data.aws_caller_identity.current.account_id
@@ -24,11 +26,10 @@ locals {
     hvn_peering_identifier = var.tutorial_networking.hvn_peering_identifier
     eks_cluster_stage  = var.eks_cluster_configuration.stage
     hcp_hvn            = var.tutorial_networking.hcp_hvn
-    kubeconfig         = var.kubeconfig
+    kubeconfig         = local.kubeconfig_file
     kube_ctx_alias     = var.kube_ctx_alias
   }
 }
-
 
 resource "random_string" "tutorial" {
   lower = true
@@ -36,4 +37,3 @@ resource "random_string" "tutorial" {
   min_lower = 5
   length = 5
 }
-

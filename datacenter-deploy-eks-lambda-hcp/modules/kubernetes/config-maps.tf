@@ -1,5 +1,4 @@
 # Dedicated config-map resource file since many of these are created and it's easier to keep them in a single context
-
 resource "kubernetes_config_map" "hashicups_config_maps" {
   for_each = { for k, v in var.service_variables : k => v if v.has_cm == true }
   metadata {
@@ -56,7 +55,6 @@ resource "kubernetes_config_map" "startup_init_script" {
   }
 }
 
-
 resource "kubernetes_config_map" "shutdown_script" {
   metadata {
     name = var.shutdown_script_config_map_options.config_map_name
@@ -91,7 +89,7 @@ resource "kubernetes_config_map" "aws_profile_config" {
   }
 }
 resource "kubernetes_config_map" "hashicups_yaml_files" {
-  for_each = fileset(path.module, "hashicups/app/*")
+  for_each = fileset(path.module, local.directories.hashicups)
   metadata {
     name = split("/", "${path.module}/${each.value}")[5]
   }
@@ -102,12 +100,19 @@ resource "kubernetes_config_map" "hashicups_yaml_files" {
 resource "kubernetes_config_map" "calculated_consul_values" {
   metadata {
     name = "values.yaml"
-
   }
   data = {
-    # This is picking up from the working-environment dir.
-    # I don't like hardcoding this path, but can fix this later.
     config = file("./rendered/values.yaml")
+  }
+}
+resource "kubernetes_config_map" "hcl_policy_lambda" {
+  metadata {
+    name = local.cm_crd_names.lhcl #"lambda-frontend.hcl"
+  }
+  data = {
+    config = templatefile("${path.module}/hashicups/crds/lambda/lambda-frontend.hcl.tftpl", {
+      SERVICE_NAME = local.lambda_service_name
+    })
   }
 }
 resource "kubernetes_config_map" "crd_proxydefault" {
@@ -118,6 +123,7 @@ resource "kubernetes_config_map" "crd_proxydefault" {
     config = file("${path.module}/hashicups/crds/proxy-defaults/proxy-global.yaml")
   }
 }
+
 resource "kubernetes_config_map" "crd_servicedefaults" {
   for_each = fileset(path.module, "hashicups/crds/service-defaults/*")
   metadata {
@@ -136,34 +142,53 @@ resource "kubernetes_config_map" "crd_serviceintentions" {
     config = file("../modules/kubernetes/${each.key}")
   }
 }
-resource "kubernetes_config_map" "crd_terminatinggateway" {
+resource "kubernetes_config_map" "crd_serviceintentions-lambda" {
   metadata {
-    name = "terminatinggateway-payments-lambda.yaml"
+    name = local.cm_crd_names.fesl #"serviceintentions-nginx-lambda.yaml"
   }
   data = {
-    config = file("${path.module}/hashicups/crds/terminating-gateway/payments-lambda.yaml")
+    config = templatefile("${path.module}/hashicups/crds/lambda/nginx.yaml.tftpl", {
+      DESTINATION_NAME = local.lambda_service_name
+    })
   }
 }
-resource "kubernetes_config_map" "crd_servicesplitter" {
+
+resource "kubernetes_config_map" "crd_terminatinggateway" {
   metadata {
-    name = "servicesplitter-payments-lambda.yaml"
+    name = "terminatinggateway-frontend-lambda.yaml"
   }
   data = {
-    config = file("${path.module}/hashicups/crds/service-splitter/payments-lambda.yaml")
+    config = templatefile("${path.cwd}/modules/kubernetes/hashicups/crds/terminating-gateway/frontend-lambda.yaml.tftpl", {
+      DESTINATION_SERVICE = local.lambda_service_name
+    }
+    )
+  }
+}
+
+resource "kubernetes_config_map" "crd_servicesplitter" {
+  metadata {
+    name = "servicesplitter-frontend-lambda.yaml"
+  }
+  data = {
+    config = templatefile("${path.cwd}/modules/kubernetes/hashicups/crds/service-splitter/frontend-lambda.yaml.tftpl", {
+      DESTINATION_SERVICE = local.lambda_service_name
+    })
   }
 }
 resource "kubernetes_config_map" "crd_serviceresolver" {
   metadata {
-    name = "serviceresolver-payments-lambda.yaml"
+    name = "serviceresolver-frontend-lambda.yaml"
   }
   data = {
-    config = file("${path.module}/hashicups/crds/service-resolver/payments-lambda.yaml")
+    config = templatefile("${path.cwd}/modules/kubernetes/hashicups/crds/service-resolver/frontend-lambda.yaml.tftpl", {
+      DESTINATION_SERVICE = local.lambda_service_name
+    })
   }
 }
 
 resource "kubernetes_config_map" "consul-api-gateway" {
   metadata {
-    name = "consul-api-gateway.yaml"
+    name = local.cm_crd_names.capi#"consul-api-gateway.yaml"
   }
   data = {
     config = file("${path.module}/hashicups/api-gateway/consul.yaml")
@@ -172,7 +197,7 @@ resource "kubernetes_config_map" "consul-api-gateway" {
 resource "kubernetes_config_map" "consul-api-gateway-routes" {
 
   metadata {
-    name = "consul-api-gateway-routes.yaml"
+    name = local.cm_crd_names.cagr #"consul-api-gateway-routes.yaml"
   }
   data = {
     config = file("${path.module}/hashicups/api-gateway/routes.yaml")
