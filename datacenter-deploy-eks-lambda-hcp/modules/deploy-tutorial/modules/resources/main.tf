@@ -60,3 +60,30 @@ module "iam_role_for_service_accounts" {
   }
 }
 
+resource "aws_iam_policy" "call_lambda" {
+  name        = "${local.unique_cluster_name}-execution"
+  path        = "/eks/"
+  description = "${local.unique_cluster_name} mesh-task execution policy"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "lambda:InvokeFunction"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "main-additional" {
+  for_each = module.eks.eks_managed_node_groups
+
+  policy_arn = aws_iam_policy.call_lambda.arn
+  role       = each.value.iam_role_name
+}

@@ -2,7 +2,9 @@ clusterContext = lambdaTutorial
 
 .PHONY apply:
 apply:
+	terraform init
 	terraform apply -auto-approve
+	terraform -chdir=working-environment init
 	terraform -chdir=working-environment apply -auto-approve && terraform output -json | jq -r '.consul_values.value' | grep -v consul_ca_cert
 
 .PHONY destroy:

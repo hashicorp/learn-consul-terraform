@@ -3,5 +3,7 @@ kind: ProxyDefaults
 metadata:
   name: global
 spec:
+  meshGateway:
+    mode: local
   config:
     protocol: http

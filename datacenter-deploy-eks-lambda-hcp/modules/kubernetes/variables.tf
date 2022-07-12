@@ -146,7 +146,8 @@ variable "startup_init_script_config_map_options" {
 
 
 variable "consul_image" {
-  default = "hashicorp/consul:1.12.2"
+  # default = "hashicorp/consul:1.12.2"
+  default = "hashicorp/consul-enterprise:1.12.2-ent"
 }
 
 variable "aws_creds_config_map_options" {

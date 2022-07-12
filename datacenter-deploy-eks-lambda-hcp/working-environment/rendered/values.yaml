@@ -1,8 +1,8 @@
 global:
   enabled: false
   name: consul
-  datacenter: ${CONSUL_DATACENTER}
-  image: ${CONSUL_IMAGE}
+  datacenter: dc1-oafzl
+  image: hashicorp/consul:1.12.2
   acls:
     manageSystemACLs: true
     bootstrapToken:
@@ -21,10 +21,10 @@ global:
 externalServers:
   enabled: true
   hosts:
-  - ${CONSUL_PRIVATE_ENDPOINT}
+  - dc1-oafzl.private.consul.98a0dcc3-5473-4e4d-a28e-6c343c498530.aws.hashicorp.cloud
   httpsPort: 443
   useSystemRoots: true
-  k8sAuthMethodHost: ${KUBE_CONTROL_PLANE}
+  k8sAuthMethodHost: https://AD71051E52EA61C0F90D3D9BC4B417D1.gr7.us-west-2.eks.amazonaws.com
 
 server:
   enabled: false
@@ -33,7 +33,7 @@ client:
   enabled: true
   grpc: true
   join:
-  - ${CONSUL_PRIVATE_ENDPOINT}
+  - dc1-oafzl.private.consul.98a0dcc3-5473-4e4d-a28e-6c343c498530.aws.hashicorp.cloud
 
   extraConfig: |
     {
@@ -58,6 +58,6 @@ controller:
 # Custom Resource Defintitions for API Gateway must be present in Kubernetes before Consul is installed.
 apiGateway:
   enabled: true
-  image: "hashicorp/consul-api-gateway:${API_GATEWAY_VERSION}"
+  image: "hashicorp/consul-api-gateway:0.2.1"
   managedGatewayClass:
     serviceType: LoadBalancer
