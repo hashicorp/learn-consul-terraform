@@ -60,19 +60,25 @@ You will perform these steps:
     1. `terraform apply`
 13. Uncomment `payments-lambda.tf` and re-apply Terraform to deploy the `payments-lambda` Lambda function.
     1. `terraform apply`
-14. Create terminating gateway
-    1. `kubectl apply --filename ../terminating-gateway-lambda-payments.yaml` 
-15. Give terminating gateway ACL token the ability to grant `service:write` for all linked services. ([GitHub Issue](https://github.com/hashicorp/consul/issues/12116#issuecomment-1019463753))
+14. Give terminating gateway ACL token the ability to grant `service:write` for all linked services. ([GitHub Issue](https://github.com/hashicorp/consul/issues/12116#issuecomment-1019463753)) (add to beginning of policy)
     1. 
     ```shell
     service "payments" {
       policy = "write"
       intentions = "read"
     }
+
+    service "payments-lambda" {
+      policy = "write"
+      intentions = "read"
+    }
     ```
-15. Create service splitter to route traffic to lambda function.
+15. Create terminating gateway
+    1. `kubectl apply --filename ../terminating-gateway-lambda-payments.yaml` 
+16. Create service splitter to route traffic to lambda function.
     1. `kubectl apply --filename ../service_splitter.yaml` 
-16. Confirm `public-api` routes traffic to `payments` service
+17. Create service intention from `public-api` to `payments-lambda`.
+18. Confirm `public-api` routes traffic to `payments` service
     1. `kubectl port-forward deploy/public-api 8080`
     2. 
     ```shell
@@ -85,7 +91,20 @@ You will perform these steps:
       -H 'Origin: http://localhost:8080' \
       --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\",    cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' --compressed | jq
       ```
-10. Clean up
-    1. Destroy all Kubernetes resources
+19. Clean up
+    1. Destroy all Kubernetes resources (need to provide explicit steps to remove CRDs + HashiCups, and remove Consul -- if you skip this step, you need to run terraform destroy twice to completely destroy.)
     2. Destroy Terraform resources
       `terraform destroy`
+
+## Common errors
+
+If you experience a 503 error trying to reach the Lambda function, ensure that you updated your terminating gateway ACL token policy to allow traffic to your **Lambda** service. If your policy is properly defined, wait a minute before trying again. The 503 error may be due to `no healthy upstream errors`. This means that the Lambda function wasn't available (most likely due to cold start).
+
+If you experience a 403 error, this is likely due to a RBAC (permissions/service intentions) issue. Ensure that you have an intention that allows traffic from `public-api` to `payments-lambda`.
+
+To debug and view the error messages, view the `public-api` logs.
+
+```
+kubectl logs deploy/public-api public-api
+```
+

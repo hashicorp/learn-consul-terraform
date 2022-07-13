@@ -1,11 +1,12 @@
 locals {
   lambda_payments_path = "../lambda-payments.zip"
+  lambda_payments_name = "payments-lambda-tu"
 }
 
 resource "aws_lambda_function" "lambda-payments" {
   filename         = local.lambda_payments_path
   source_code_hash = filebase64sha256(local.lambda_payments_path)
-  function_name    = "payments-lambda"
+  function_name    = local.lambda_payments_name
   role             = aws_iam_role.lambda_payments.arn
   handler          = "lambda-payments"
   runtime          = "go1.x"
@@ -18,7 +19,7 @@ resource "aws_lambda_function" "lambda-payments" {
 
 
 resource "aws_iam_policy" "lambda_payments" {
-  name        = "lambda-payments-policy"
+  name        = "${local.lambda_payments_name}-policy"
   path        = "/"
   description = "IAM policy lambda payments"
 
@@ -41,7 +42,7 @@ EOF
 }
 
 resource "aws_iam_role" "lambda_payments" {
-  name = "lambda-payments-role"
+  name = "${local.lambda_payments_name}-role"
 
   assume_role_policy = <<EOF
 {

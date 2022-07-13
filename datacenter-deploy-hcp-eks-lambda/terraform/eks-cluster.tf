@@ -50,8 +50,8 @@ module "eks" {
       desired_size = 3
       labels       = {}
 
-      instance_types = ["t2.small"]
-      capacity_type  = "SPOT"
+      instance_types = ["t3a.medium"]
+      # capacity_type  = "SPOT"
       metadata_options = {
         http_endpoint               = "enabled"
         http_tokens                 = "optional"

@@ -2,8 +2,8 @@
 
 locals {
   public_ecr_region   = "us-east-1"
-  ecr_base_image      = "public.ecr.aws/hashicorp/consul-lambda-registrator:0.1.0-alpha2"
-  ecr_repository_name = "lambda_registrator"
+  ecr_base_image      = "public.ecr.aws/hashicorp/consul-lambda-registrator:0.1.0-beta1"
+  ecr_repository_name = "lambda_registrator-tu"
   ecr_image_tag       = "0.1.0-beta1"
 }
 
