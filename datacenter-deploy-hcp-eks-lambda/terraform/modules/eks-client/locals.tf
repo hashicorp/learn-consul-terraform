@@ -30,6 +30,6 @@ locals {
       }
     ]
   }
-  script_cmd           = "bash ${path.root}/script_templates/clean_kube.sh ${var.region} ${var.cluster_id}"
+
 }
 

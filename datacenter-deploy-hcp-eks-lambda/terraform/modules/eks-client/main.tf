@@ -16,7 +16,6 @@ resource "kubernetes_secret" "consul_secrets" {
 resource "kustomization_resource" "gateway_crds" {
   for_each = var.gateway_crd.ids
   manifest = var.gateway_crd.manifests[each.value]
-  depends_on = [null_resource.clean_kube]
 }
 
 resource "helm_release" "consul" {
@@ -36,37 +35,60 @@ resource "helm_release" "consul" {
     })
   ]
 
-  depends_on = [null_resource.clean_kube, kustomization_resource.gateway_crds, kubernetes_secret.consul_secrets]
+  depends_on = [kustomization_resource.gateway_crds, kubernetes_secret.consul_secrets]
 }
 
 resource "null_resource" "deploy_api_gateway" {
+  triggers = {
+    region = var.region
+    cluster_id = var.cluster_id
+  }
+
   provisioner "local-exec" {
     command = "bash ${path.module}/api-gw/deploy.sh"
     environment = {
+      DESTROY = 1
       REGION = var.region
       CLUSTER_ID = var.cluster_id
     }
   }
+
+  provisioner "local-exec" {
+    command = "bash ${path.module}/api-gw/deploy.sh"
+    when = destroy
+  }
   depends_on = [helm_release.consul]
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 resource "null_resource" "deploy_hashicups" {
+  triggers = {
+    REGION = var.region
+    CLUSTER_ID = var.cluster_id
+  }
   provisioner "local-exec" {
     command = "bash ${path.module}/deploy_hashicups.sh"
     environment = {
-      REGION = var.region
-      CLUSTER_ID = var.cluster_id
+      DESTROY = 1
+      REGION = self.triggers.REGION
+      CLUSTER_ID = self.triggers.CLUSTER_ID
     }
-  }
-  depends_on = [null_resource.deploy_api_gateway]
-}
-
-resource "null_resource" "clean_kube" {
-  triggers = {
-    script_cmd   = local.script_cmd
   }
   provisioner "local-exec" {
     when = destroy
-    command = self.triggers.script_cmd
+    command = "bash ${path.module}/deploy_hashicups.sh"
+    environment = {
+      DESTROY = 0
+      REGION = self.triggers.REGION
+      CLUSTER_ID = self.triggers.CLUSTER_ID
+    }
+  }
+  depends_on = [null_resource.deploy_api_gateway]
+  lifecycle {
+    ignore_changes = all
   }
 }
+
+

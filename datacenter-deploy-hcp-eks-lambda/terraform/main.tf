@@ -81,6 +81,18 @@ module "eks" {
   }
 }
 
+module "aws_hcp_consul" {
+  source  = "registry.terraform.io/hashicorp/hcp-consul/aws"
+  version = "~> 0.6.1"
+
+  hvn                = hcp_hvn.main
+  vpc_id             = module.vpc.vpc_id
+  subnet_ids         = concat(module.vpc.public_subnets, module.vpc.private_subnets)
+  route_table_ids    = concat(module.vpc.public_route_table_ids, module.vpc.private_route_table_ids)
+  security_group_ids = [module.eks.cluster_primary_security_group_id]
+  depends_on = [module.eks, module.vpc]
+}
+
 module "eks_consul_client" {
   source = "./modules/eks-client"
 
@@ -94,20 +106,8 @@ module "eks_consul_client" {
   gossip_encryption_key = jsondecode(base64decode(hcp_consul_cluster.main.consul_config_file))["encrypt"]
   gateway_crd           = data.kustomization.gateway_crds
   region                = var.vpc_region
-  depends_on = [module.eks]
+    depends_on = [module.render_configs, module.vpc, module.aws_hcp_consul, module.eks] #module.vpc]
 }
-
-module "aws_hcp_consul" {
-  source  = "registry.terraform.io/hashicorp/hcp-consul/aws"
-  version = "~> 0.6.1"
-
-  hvn                = hcp_hvn.main
-  vpc_id             = module.vpc.vpc_id
-  subnet_ids         = concat(module.vpc.public_subnets, module.vpc.private_subnets)
-  route_table_ids    = concat(module.vpc.public_route_table_ids, module.vpc.private_route_table_ids)
-  security_group_ids = [module.eks.cluster_primary_security_group_id]
-}
-
 
 
 module "render_configs" {
@@ -120,3 +120,17 @@ module "remove_kubernetes_backed_enis" {
   vpc_id = module.vpc.vpc_id
   region = var.vpc_region
 }
+
+#resource "null_resource" "clean_kube" {
+#  triggers = {
+#    script_cmd   = local.script_cmd
+#  }
+#  provisioner "local-exec" {
+#    when = destroy
+#    command = self.triggers.script_cmd
+#  }
+#  lifecycle {
+#    ignore_changes = all
+#
+#  }
+#}

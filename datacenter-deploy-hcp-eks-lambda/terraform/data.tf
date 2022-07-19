@@ -1,5 +1,6 @@
 data "kustomization" "gateway_crds" {
   path = "github.com/hashicorp/consul-api-gateway/config/crd?ref=v${var.api_gateway_version}"
+
 }
 
 data "aws_availability_zones" "available" {
