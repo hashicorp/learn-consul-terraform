@@ -8,14 +8,6 @@ terraform {
       source  = "hashicorp/hcp"
       version = ">= 0.18.0"
     }
-    helm = {
-      source  = "hashicorp/helm"
-      version = ">= 2.3.0"
-    }
-    kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = ">= 1.11.3"
-    }
     random = {
       source  = "hashicorp/random"
       version = ">= 3.3.2"
@@ -23,9 +15,6 @@ terraform {
   }
 }
 
-provider "aws" {
-  region = var.vpc_region
-}
 
-provider "hcp" {
-}
+
+

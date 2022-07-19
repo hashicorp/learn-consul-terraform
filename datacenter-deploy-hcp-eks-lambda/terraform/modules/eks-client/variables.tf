@@ -3,6 +3,16 @@ variable "boostrap_acl_token" {
   description = "The ACL bootstrap token used to create necessary ACL tokens for the Helm chart"
 }
 
+variable "region" {
+  type = string
+  description = "AWS region"
+}
+
+variable "eks_cluster_id" {
+  type = string
+  description = "Cluster ID of EKS"
+}
+
 variable "gossip_encryption_key" {
   type        = string
   description = "The gossip encryption key of the Consul cluster"
@@ -28,7 +38,7 @@ variable "k8s_api_endpoint" {
   description = "The Kubernetes API endpoint for the Kubernetes cluster"
 }
 
-variable "cluster_id" {
+variable "hcp_cluster_id" {
   type        = string
   description = "The ID of the Consul cluster that is managing the clients"
 }
@@ -48,15 +58,5 @@ variable "api_gateway_version" {
   type        = string
   description = "The Consul API gateway image version to use"
   default     = "0.2.1"
-}
-
-# Complex object type, no type or default.
-variable "gateway_crd" {
-  description = "CRD object returned from data resource."
-}
-
-variable "region" {
-  type = string
-  description = "AWS region"
 }
 
