@@ -18,7 +18,7 @@ terraform {
 variable "crd_path" {
   type = string
   description = "Where CRDs for the API Gateway are located"
-  default = "./modules/eks-client/api-gw/crd/*"
+  default = "./modules/eks-client/api-gw/crd/*.yaml"
 }
 
 resource "kubectl_manifest" "consul_api_gateway" {

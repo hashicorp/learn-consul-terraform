@@ -53,6 +53,9 @@ controller:
 
 apiGateway:
   enabled: true
+  logLevel: "debug"
   image: "hashicorp/consul-api-gateway:${api_gateway_version}"
   managedGatewayClass:
     serviceType: LoadBalancer
+    service: |
+      - alb.ingress.kubernetes.io/security-groups: ${security_group}

@@ -1,20 +1,19 @@
 # Creates all the constant values and pre-rendered practitioner files.
 module "render_tutorial" {
-  source               = "./modules/rendering"
-
+  source = "./modules/rendering"
 }
 
 # Deploy AWS and VPC resources
 module "infrastructure" {
   source = "./modules/infra"
 
-  cluster_id = module.render_tutorial.tutorial_outputs.hcp_cluster_id
-  hvn_id     = module.render_tutorial.tutorial_outputs.hvn_id
-  hvn_region = module.render_tutorial.tutorial_outputs.region
-  vpc_region = module.render_tutorial.tutorial_outputs.region
+  cluster_id             = module.render_tutorial.tutorial_outputs.hcp_cluster_id
+  hvn_id                 = module.render_tutorial.tutorial_outputs.hvn_id
+  hvn_region             = module.render_tutorial.tutorial_outputs.region
+  vpc_region             = module.render_tutorial.tutorial_outputs.region
   aws_availability_zones = module.render_tutorial.tutorial_outputs.availability_zones
-  vpc_id = module.render_tutorial.tutorial_outputs.vpc_id
-  lambda_payments_name = module.render_tutorial.tutorial_outputs.lambda_payments_name
+  vpc_id                 = module.render_tutorial.tutorial_outputs.vpc_id
+  lambda_payments_name   = module.render_tutorial.tutorial_outputs.lambda_payments_name
 }
 
 # Deploys Kubernetes resources
@@ -31,11 +30,13 @@ module "eks_consul_client" {
   gossip_encryption_key = module.infrastructure.eks_consul_client_values.gossip_encryption_key
   eks_cluster_id        = module.infrastructure.kubernetes_cluster_id
   region                = var.vpc_region
+  security_group        = module.infrastructure.security_group
 }
+
+
 
 module "remove_kubernetes_backed_enis" {
   source = "github.com/webdog/terraform-kubernetes-delete-eni"
-
   vpc_id = module.render_tutorial.tutorial_outputs.vpc_id
   region = var.vpc_region
 }

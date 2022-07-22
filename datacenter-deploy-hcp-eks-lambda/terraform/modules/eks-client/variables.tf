@@ -4,12 +4,12 @@ variable "boostrap_acl_token" {
 }
 
 variable "region" {
-  type = string
+  type        = string
   description = "AWS region"
 }
 
 variable "eks_cluster_id" {
-  type = string
+  type        = string
   description = "Cluster ID of EKS"
 }
 
@@ -51,12 +51,13 @@ variable "consul_version" {
 variable "chart_version" {
   type        = string
   description = "The Consul Helm chart version to use"
-  default     = "0.43.0"
+  default     = "0.46.0"
 }
 
 variable "api_gateway_version" {
   type        = string
   description = "The Consul API gateway image version to use"
-  default     = "0.2.1"
+  default     = "0.3.0"
 }
 
+variable "security_group" {}

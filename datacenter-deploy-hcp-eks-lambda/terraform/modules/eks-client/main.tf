@@ -20,6 +20,7 @@ resource "helm_release" "consul" {
   version    = var.chart_version
   chart      = "consul"
 
+
   values = [
     templatefile("${path.root}/modules/rendering/templates/values.yaml.tftpl", {
       datacenter          = var.datacenter
@@ -28,41 +29,47 @@ resource "helm_release" "consul" {
       k8s_api_endpoint    = var.k8s_api_endpoint
       consul_version      = substr(var.consul_version, 1, -1)
       api_gateway_version = var.api_gateway_version
+      security_group      = var.security_group
     })
   ]
   depends_on = [module.api_gateway_crd]
 }
 
 resource "kubectl_manifest" "api_gateway_deployed" {
-  yaml_body = file("${path.module}/api-gw/consul-api-gateway.yaml")
+  yaml_body  = file("${path.module}/api-gw/consul-api-gateway.yaml")
   depends_on = [module.api_gateway_crd]
-}
-
-resource "time_sleep" "wait_for_api_gw" {
-  depends_on = [kubectl_manifest.api_gateway_deployed]
-  create_duration = "60s"
-  destroy_duration = "30s"
 }
 
 resource "kubectl_manifest" "api_gateway_route" {
-  yaml_body = file("${path.module}/api-gw/routes.yaml")
+  yaml_body  = file("${path.module}/api-gw/routes.yaml")
   depends_on = [module.api_gateway_crd]
 }
 
-resource "kubectl_manifest" "hashicups_consul_resources" {
-  for_each  = fileset(path.root, local.consul_resources_path)
-  yaml_body = file(each.value)
+resource "kubectl_manifest" "kube_resources_service-accounts_and_config-maps" {
+  for_each   = local.service_account_config_maps
+  yaml_body  = file(each.value)
+  depends_on = [helm_release.consul]
 }
 
-resource "kubectl_manifest" "deploy_hashicups" {
-  for_each = fileset(path.root, "./modules/eks-client/hashicups/app/*")
-  yaml_body = file(each.value)
+resource "kubectl_manifest" "hashicups_resources" {
 
-  provisioner "local-exec" {
-    when = destroy
-    interpreter = ["bash"]
-    command = "./scripts/patch-resources.sh"
-    on_failure = continue
-  }
+  for_each   = fileset(path.root, local.hashicups_resources)
+  yaml_body  = file(each.value)
+  depends_on = [helm_release.consul, kubectl_manifest.kube_resources_service-accounts_and_config-maps]
 }
+
+resource "kubectl_manifest" "consul_service_resources" {
+  for_each   = local.consul_yamls
+  yaml_body  = file(each.value)
+  depends_on = [helm_release.consul, kubectl_manifest.hashicups_resources]
+}
+
+
+
+
+
+
+
+
+
 
