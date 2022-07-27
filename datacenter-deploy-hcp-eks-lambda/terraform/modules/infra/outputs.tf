@@ -1,3 +1,13 @@
+output "vpc_subnets_lambda_registrator" {
+  value = module.vpc.private_subnets
+}
+
+output "vpc_default_security_group" {
+  value = module.vpc.default_security_group_id
+}
+
+
+
 output "consul_addr" {
   value = hcp_consul_cluster.main.consul_public_endpoint_url
 }

@@ -54,11 +54,12 @@ resource "aws_security_group" "hashicups_kubernetes" {
 
 module "eks" {
   source          = "registry.terraform.io/terraform-aws-modules/eks/aws"
-  version         = "18.24.1"
+  version         = "18.26.6"
   cluster_name    = var.cluster_id
   cluster_version = var.kubernetes_version
   subnet_ids      = concat(module.vpc.private_subnets, module.vpc.public_subnets)
   vpc_id          = module.vpc.vpc_id
+  enable_irsa     = false
   eks_managed_node_group_defaults = {
 
   }
@@ -72,7 +73,7 @@ module "eks" {
       labels                 = {}
       vpc_security_group_ids = [aws_security_group.hashicups_kubernetes.id]
 
-      instance_types = ["t3a.medium"]
+      instance_types = ["m5.large"]
       metadata_options = {
         http_endpoint               = "enabled"
         http_tokens                 = "optional"
