@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 module "vpc" {
   source  = "registry.terraform.io/terraform-aws-modules/vpc/aws"
   version = "3.11.0"
@@ -18,6 +20,7 @@ module "vpc" {
 output "security_group" {
   value = aws_security_group.hashicups_kubernetes.id
 }
+
 # A Security Group for the HashiCups deployment.
 resource "aws_security_group" "hashicups_kubernetes" {
   vpc_id = module.vpc.vpc_id
@@ -84,18 +87,6 @@ module "eks" {
   }
 }
 
-module "aws_hcp_consul" {
-  source  = "registry.terraform.io/hashicorp/hcp-consul/aws"
-  version = "~> 0.6.1"
-
-  hvn                = hcp_hvn.main
-  vpc_id             = module.vpc.vpc_id
-  subnet_ids         = concat(module.vpc.public_subnets, module.vpc.private_subnets)
-  route_table_ids    = concat(module.vpc.public_route_table_ids, module.vpc.private_route_table_ids)
-  security_group_ids = [module.eks.cluster_primary_security_group_id]
-  depends_on         = [module.eks, module.vpc, hcp_hvn.main]
-}
-
 resource "hcp_hvn" "main" {
   cloud_provider = "aws"
   hvn_id         = var.hvn_id
@@ -127,5 +118,47 @@ resource "aws_iam_policy" "call_lambda" {
   path        = var.eks_iam_path
   description = "Permits invocation of any lambda function"
   policy      = file("${path.module}/assets/iam-lambda_invoke_policy.json")
+}
+
+locals {
+  peering_id = var.vpc_id
+}
+
+resource "hcp_aws_network_peering" "default" {
+  peer_account_id = data.aws_caller_identity.current.account_id
+  peering_id      = var.vpc_id
+  peer_vpc_region = var.vpc_region
+  peer_vpc_id     = module.vpc.vpc_id
+  hvn_id          = hcp_hvn.main.hvn_id
+}
+
+resource "aws_vpc_peering_connection_accepter" "peer" {
+  vpc_peering_connection_id = hcp_aws_network_peering.default.provider_peering_id
+  auto_accept               = true
+}
+
+resource "hcp_hvn_route" "peering_route" {
+  hvn_route_id     = "${var.vpc_id}-route"
+  target_link      = hcp_aws_network_peering.default.self_link
+  hvn_link         = hcp_hvn.main.self_link
+  destination_cidr = module.vpc.vpc_cidr_block
+  depends_on       = [aws_vpc_peering_connection_accepter.peer]
+
+}
+
+resource "aws_route" "public_to_hvn" {
+  count = length(module.vpc.public_route_table_ids)
+
+  route_table_id            = module.vpc.public_route_table_ids[count.index]
+  destination_cidr_block    = hcp_hvn.main.cidr_block
+  vpc_peering_connection_id = aws_vpc_peering_connection_accepter.peer.vpc_peering_connection_id
+}
+
+resource "aws_route" "private_to_hvn" {
+  count = length(module.vpc.private_route_table_ids)
+
+  route_table_id            = module.vpc.private_route_table_ids[count.index]
+  destination_cidr_block    = hcp_hvn.main.cidr_block
+  vpc_peering_connection_id = aws_vpc_peering_connection_accepter.peer.vpc_peering_connection_id
 }
 

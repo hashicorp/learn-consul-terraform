@@ -9,7 +9,6 @@ locals {
   service_account_config_maps              = setunion(fileset(path.root, local.kube_resources_path_service-accounts), fileset(path.root, local.kube_resources_path_config-maps))
   service_intentions                       = fileset(path.root, local.consul_resources_path_service-intentions)
   service_defaults                         = fileset(path.root, local.consul_resources_path_service_defaults)
-  #proxy_defaults                           = fileset(path.root, local.consul_resources_path)
-  consul_yamls = setunion(local.service_intentions, local.service_defaults) #, local.proxy_defaults)
-  secret_name  = var.hcp_cluster_id
+  consul_yamls                             = setunion(local.service_intentions, local.service_defaults)
+  secret_name                              = var.hcp_cluster_id
 }

@@ -1,4 +1,3 @@
-# 0
 module "api_gateway_crd" {
   source = "../../modules/api-gw-crd"
 }
@@ -14,7 +13,6 @@ resource "kubernetes_secret" "consul_secrets" {
   type = "Opaque"
 }
 
-# 1
 resource "helm_release" "consul" {
   name       = "consul"
   repository = "https://helm.releases.hashicorp.com"
