@@ -28,3 +28,9 @@ variable "cts_version" {
   description = "CTS version to install"
   default     = "0.6.0+ent"
 }
+
+variable "aws_region" {
+  type = string
+  description = "AWS region"
+  default = "us-west-2"
+}

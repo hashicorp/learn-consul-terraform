@@ -1,6 +1,6 @@
 locals {
-  aws_region = "us-west-2"
-  hvn_region = "us-west-2"
+  aws_region = var.aws_region
+  hvn_region = var.aws_region
 }
 
 provider "aws" {
