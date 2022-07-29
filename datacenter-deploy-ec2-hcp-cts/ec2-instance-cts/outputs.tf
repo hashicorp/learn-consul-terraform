@@ -17,8 +17,3 @@ output "consul_root_token" {
   sensitive   = true
   description = "HCP Consul root ACL token"
 }
-
-output "next_steps" {
-  value = "Your instance will be ready momentarily. Use 'terraform output consul_root_token' to retrieve the Consul root token."
-}
-
