@@ -17,7 +17,7 @@ setup_deps() {
   version="${consul_version}"
   consul_package="consul-enterprise="$${version:1}"*"
   cts_package="consul-terraform-sync-enterprise="$${cts_version:1}"*"
-  apt install -qy apt-transport-https gnupg2 curl lsb-release nomad $${consul_package} $${cts_package} getenvoy-envoy unzip jq apache2-utils nginx
+  apt install -qy apt-transport-https gnupg2 curl lsb-release nomad $${consul_package} $${cts_package} getenvoy-envoy unzip jq tree apache2-utils nginx
 
   curl -fsSL https://get.docker.com -o get-docker.sh
   sh ./get-docker.sh
