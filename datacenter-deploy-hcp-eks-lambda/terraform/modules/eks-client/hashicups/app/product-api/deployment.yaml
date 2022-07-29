@@ -1,0 +1,53 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-api
+  labels:
+    app: product-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-api
+  template:
+    metadata:
+      labels:
+        app: product-api
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9102"
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/connect-service-upstreams: "product-api-db:5432"
+    spec:
+      serviceAccountName: product-api
+      volumes:
+        - name: config
+          configMap:
+            name: db-configmap
+            items:
+              - key: config
+                path: conf.json
+      containers:
+        - name: product-api
+          image: hashicorpdemoapp/product-api:v0.0.20
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9090
+            - containerPort: 9103
+          env:
+            - name: CONFIG_FILE
+              value: /config/conf.json
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+            periodSeconds: 10
+            failureThreshold: 30
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+
