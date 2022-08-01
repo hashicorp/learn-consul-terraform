@@ -1,0 +1,8 @@
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: product-api-db
+spec:
+  protocol: tcp
+

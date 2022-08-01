@@ -1,0 +1,10 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: ${LAMBDA_SERVICE}
+spec:
+  sources:
+    - name: ${LAMBDA_UPSTREAM}
+      action: allow
+  destination:
+    name: ${LAMBDA_SERVICE}

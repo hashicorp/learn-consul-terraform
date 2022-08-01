@@ -1,0 +1,9 @@
+service "payments" {
+      policy = "write"
+      intentions = "read"
+}
+
+service "${SERVICE_NAME}" {
+      policy = "write"
+      intentions = "read"
+}

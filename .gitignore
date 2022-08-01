@@ -12,9 +12,6 @@ config.yaml
 *.tfstate
 *.tfstate.*
 
-#Lock files
-*.terraform.lock.hcl
-
 # Crash log files
 crash.log
 ca.pem
