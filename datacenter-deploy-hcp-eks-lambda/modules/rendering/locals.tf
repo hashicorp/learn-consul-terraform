@@ -1,7 +1,6 @@
 locals {
   uid                  = random_string.cluster_id.id
   region               = "us-west-2"
-  availability_zones   = ["us-west-2a", "us-west-2b", "us-west-2c"]
   hvn_id               = "consullambda-${local.uid}"
   hcp_cluster_id       = "consullambda-${local.uid}"
   vpc_id               = "consullambda-${local.uid}"

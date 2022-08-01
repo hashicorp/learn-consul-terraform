@@ -1,3 +1,11 @@
+data "aws_availability_zones" "azs_no_local_zones" {
+  filter {
+    name   = "opt-in-status"
+    values = ["opt-in-not-required"]
+  }
+  state = "available"
+}
+
 # Creates all the constant values and pre-rendered practitioner files.
 module "render_tutorial" {
   source = "./modules/rendering"
@@ -11,9 +19,9 @@ module "infrastructure" {
   hvn_id                 = module.render_tutorial.tutorial_outputs.hvn_id
   hvn_region             = module.render_tutorial.tutorial_outputs.region
   vpc_region             = module.render_tutorial.tutorial_outputs.region
-  aws_availability_zones = module.render_tutorial.tutorial_outputs.availability_zones
-  vpc_id                 = module.render_tutorial.tutorial_outputs.vpc_id
   lambda_payments_name   = module.render_tutorial.tutorial_outputs.lambda_payments_name
+  vpc_id                 = module.render_tutorial.tutorial_outputs.vpc_id
+  aws_availability_zones = data.aws_availability_zones.azs_no_local_zones.names
 }
 
 # Deploys Kubernetes resources
@@ -32,7 +40,6 @@ module "eks_consul_client" {
   region                = var.vpc_region
   security_group        = module.infrastructure.security_group
 }
-
 
 
 module "remove_kubernetes_backed_enis" {
