@@ -37,6 +37,6 @@ module "eks_consul_client" {
 
 module "remove_kubernetes_backed_enis" {
   source = "github.com/webdog/terraform-kubernetes-delete-eni"
-  vpc_id = module.render_tutorial.tutorial_outputs.vpc_id
+  vpc_id = module.infrastructure.vpc.vpc_id
   region = var.vpc_region
 }
