@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     kubectl = {
-      source = "gavinbunney/kubectl"
+      source  = "gavinbunney/kubectl"
       version = "1.14.0"
     }
     helm = {
@@ -9,7 +9,7 @@ terraform {
       version = ">= 2.3.0"
     }
     kubernetes = {
-      source = "hashicorp/kubernetes"
+      source  = "hashicorp/kubernetes"
       version = "2.12.1"
     }
   }
@@ -31,9 +31,9 @@ provider "kubectl" {
 }
 
 provider "kubernetes" {
-  host = var.k8s_api_endpoint
+  host                   = var.k8s_api_endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-  token = data.aws_eks_cluster_auth.cluster.token
+  token                  = data.aws_eks_cluster_auth.cluster.token
 }
 
 
