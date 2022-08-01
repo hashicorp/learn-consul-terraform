@@ -54,7 +54,7 @@ func HandleRequest(ctx context.Context, request Request) (Response, error) {
 		Message:        "Payment processed successfully, card details returned for demo purposes, not for production",
 		ID:             uuid.New().String(),
 		CardPlaintext:  requestBody.Number,
-		CardCiphertext: "Encryption Enabled",
+		CardCiphertext: "Encryption Enabled (Lambda)",
 	}
 
 	rawResponse, err := json.Marshal(responseBody)
