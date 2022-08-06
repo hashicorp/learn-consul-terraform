@@ -76,3 +76,13 @@ resource "hcp_consul_cluster" "main" {
   public_endpoint = true
   tier            = "development"
 }
+
+resource "local_file" "hcp_consul_config" {
+  content_base64 = hcp_consul_cluster.main.consul_config_file
+  filename = "client_config.json"
+}
+
+resource "local_file" "hcp_consul_ca" {
+  content_base64 = hcp_consul_cluster.main.consul_ca_file
+  filename = "ca.pem"
+}
