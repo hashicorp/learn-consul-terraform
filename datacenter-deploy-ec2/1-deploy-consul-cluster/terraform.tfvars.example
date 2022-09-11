@@ -1,0 +1,4 @@
+lb_ingress_ip = "YOUR_PUBLIC_IP"
+region = "us-east-1"
+name = "learn-ecs"
+consul_version = "1.10.3"
