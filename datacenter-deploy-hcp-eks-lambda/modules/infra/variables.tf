@@ -42,7 +42,7 @@ variable "hvn_id" {
 variable "consul_tier" {
   type        = string
   description = "The HCP Consul tier to use when creating a Consul cluster"
-  default     = "standard"
+  default     = "development"
 }
 
 variable "consul_version" {
