@@ -33,47 +33,37 @@ resource "helm_release" "consul" {
 
   depends_on = [module.api_gateway_crd, kubernetes_secret.consul_secrets]
 }
-resource "kubectl_manifest" "kube_resources_service-accounts_and_config-maps" {
-  for_each   = local.service_account_config_maps
-  yaml_body  = file(each.value)
-  depends_on = [helm_release.consul]
-}
+# resource "kubectl_manifest" "kube_resources_service-accounts_and_config-maps" {
+#   for_each   = local.service_account_config_maps
+#   yaml_body  = file(each.value)
+#   depends_on = [helm_release.consul]
+# }
 
-resource "kubectl_manifest" "hashicups_resources" {
-  for_each   = fileset(path.root, local.hashicups_resources)
-  yaml_body  = file(each.value)
-  depends_on = [kubectl_manifest.kube_resources_service-accounts_and_config-maps]
-}
-resource "kubectl_manifest" "consul_service_resources" {
-  for_each   = local.consul_yamls
-  yaml_body  = file(each.value)
-  depends_on = [kubectl_manifest.hashicups_resources]
-}
+# resource "kubectl_manifest" "hashicups_resources" {
+#   for_each   = fileset(path.root, local.hashicups_resources)
+#   yaml_body  = file(each.value)
+#   depends_on = [kubectl_manifest.kube_resources_service-accounts_and_config-maps]
+# }
+# resource "kubectl_manifest" "consul_service_resources" {
+#   for_each   = local.consul_yamls
+#   yaml_body  = file(each.value)
+#   depends_on = [kubectl_manifest.hashicups_resources]
+# }
 
-resource "kubectl_manifest" "api_gateway_deployed" {
-  yaml_body  = file("${path.module}/api-gw/consul-api-gateway.yaml")
-  depends_on = [kubectl_manifest.consul_service_resources]
-}
-resource "null_resource" "api_gateway_ready" {
-  provisioner "local-exec" {
-    command = <<EOF
-aws eks  --region ${var.region} update-kubeconfig --name ${var.eks_cluster_id}
-kubectl wait --for=condition=ready gateway/api-gateway --timeout=90s
-EOF
-  }
-  depends_on = [kubectl_manifest.api_gateway_deployed]
-}
-resource "kubectl_manifest" "api_gateway_route" {
-  yaml_body  = file("${path.module}/api-gw/routes.yaml")
-  depends_on = [null_resource.api_gateway_ready]
-}
-
-
-
-
-
-
-
-
-
-
+# resource "kubectl_manifest" "api_gateway_deployed" {
+#   yaml_body  = file("${path.module}/api-gw/consul-api-gateway.yaml")
+#   depends_on = [kubectl_manifest.consul_service_resources]
+# }
+# resource "null_resource" "api_gateway_ready" {
+#   provisioner "local-exec" {
+#     command = <<EOF
+# aws eks  --region ${var.region} update-kubeconfig --name ${var.eks_cluster_id}
+# kubectl wait --for=condition=ready gateway/api-gateway --timeout=90s
+# EOF
+#   }
+#   depends_on = [kubectl_manifest.api_gateway_deployed]
+# }
+# resource "kubectl_manifest" "api_gateway_route" {
+#   yaml_body  = file("${path.module}/api-gw/routes.yaml")
+#   depends_on = [null_resource.api_gateway_ready]
+# }
