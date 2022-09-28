@@ -9,6 +9,8 @@ data "aws_availability_zones" "azs_no_local_zones" {
 # Creates all the constant values and pre-rendered practitioner files.
 module "render_tutorial" {
   source = "./modules/rendering"
+
+  vpc_region = var.vpc_region
 }
 
 # Deploy AWS and VPC resources
