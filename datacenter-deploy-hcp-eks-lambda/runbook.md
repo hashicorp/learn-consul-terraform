@@ -93,7 +93,7 @@
 
 11. Deploy Lambda Registrator
 
-	Create file named `lambda-tutorial.tf` with the following contents.
+	Make sure Docker is running on your local machine. Create file named `lambda-tutorial.tf` with the following contents.
 
 	```
 	module "lambda-registration" {
@@ -257,7 +257,7 @@
 	kubectl apply -f ./practitioner/service-splitter.yaml
 	```
 
-17. Verify routed traffic 
+17. Verify routed traffic. Restart any remaining `kubectl port-forward` instances.
 
 	```
 	kubectl port-forward deploy/public-api 8080
