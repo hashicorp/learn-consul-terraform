@@ -1,6 +1,6 @@
 locals {
   uid                  = random_string.cluster_id.id
-  region               = "us-west-2"
+  region               = var.vpc_region
   hvn_id               = "consullambda-${local.uid}"
   hcp_cluster_id       = "consullambda-${local.uid}"
   vpc_id               = "consullambda-${local.uid}"
