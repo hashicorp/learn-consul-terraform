@@ -48,7 +48,7 @@ variable "consul_tier" {
 variable "consul_version" {
   type        = string
   description = "The HCP Consul version"
-  default     = "v1.12.2"
+  default     = "v1.12.5"
 }
 
 variable "kubernetes_version" {
