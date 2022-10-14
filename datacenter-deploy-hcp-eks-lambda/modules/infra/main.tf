@@ -114,7 +114,7 @@ resource "aws_iam_role_policy_attachment" "main-additional" {
 }
 
 resource "aws_iam_policy" "call_lambda" {
-  name        = var.lambda_payments_name
+  name        = "invoke-lambda-${var.cluster_id}"
   path        = var.eks_iam_path
   description = "Permits invocation of any lambda function"
   policy      = file("${path.module}/assets/iam-lambda_invoke_policy.json")

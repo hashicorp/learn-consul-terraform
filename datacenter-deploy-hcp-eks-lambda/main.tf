@@ -19,7 +19,6 @@ module "infrastructure" {
   hvn_id                 = module.render_tutorial.tutorial_outputs.hvn_id
   hvn_region             = module.render_tutorial.tutorial_outputs.region
   vpc_region             = module.render_tutorial.tutorial_outputs.region
-  lambda_payments_name   = module.render_tutorial.tutorial_outputs.lambda_payments_name
   vpc_id                 = module.render_tutorial.tutorial_outputs.vpc_id
   aws_availability_zones = data.aws_availability_zones.azs_no_local_zones.names
 }

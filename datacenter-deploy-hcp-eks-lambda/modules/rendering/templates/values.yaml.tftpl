@@ -59,3 +59,7 @@ apiGateway:
     serviceType: LoadBalancer
     service: |
       - alb.ingress.kubernetes.io/security-groups: ${security_group}
+
+meshGateway:
+  enabled: true
+  replicas: 1

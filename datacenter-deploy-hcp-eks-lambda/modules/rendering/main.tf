@@ -32,3 +32,11 @@ resource "local_file" "terminating-gateway-kubernetes" {
     SERVICE_NAME = local.lambda_payments_name
   })
 }
+
+resource "local_file" "service_intentions_lambda_products_products_api_db" {
+  filename = "${local.rdir}/product-intentions.yaml"
+  content = templatefile(local.product_intention, {
+    LAMBDA_SERVICE  = local.lambda_products_name
+    LAMBDA_UPSTREAM = "product-api-db"
+  })
+}

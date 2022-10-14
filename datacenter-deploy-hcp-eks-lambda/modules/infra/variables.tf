@@ -3,11 +3,6 @@ variable "cluster_id" {
   description = "The name of your HCP Consul cluster"
 }
 
-variable "lambda_payments_name" {
-  description = "Name of Lambda function"
-  type        = string
-}
-
 variable "eks_iam_path" {
   description = "Path in IAM"
   default     = "/eks/"
@@ -48,7 +43,7 @@ variable "consul_tier" {
 variable "consul_version" {
   type        = string
   description = "The HCP Consul version"
-  default     = "v1.12.2"
+  default     = "v1.13.2"
 }
 
 variable "kubernetes_version" {
