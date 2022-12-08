@@ -17,4 +17,4 @@ terraform init
 terraform apply --auto-approve
 ```
 
-3. Go through the [EKS + HCP Consul tutorial](https://learn.hashicorp.com/tutorials/cloud/consul-client-eks)
+3. Go through the [EKS + HCP Consul tutorial](https://developer.hashicorp.com/consul/tutorials/cloud-production/consul-client-eks)
