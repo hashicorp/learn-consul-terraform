@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_lb" "example_client_app" {
   name               = "${var.name}-example-client-app"
   internal           = false

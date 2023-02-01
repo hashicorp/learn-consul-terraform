@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 // HashiCorp Cloud Platform (HCP) Variables
 
 variable "hvn_region" {

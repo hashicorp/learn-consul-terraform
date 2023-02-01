@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # The client app is part of the service mesh. It calls
 # the server app through the service mesh.
 # It's exposed via a load balancer.

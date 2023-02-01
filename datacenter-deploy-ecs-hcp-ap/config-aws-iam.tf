@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_iam_role" "hashicups" {
   for_each = { for cluster in var.ecs_ap_globals.ecs_clusters : cluster.name => cluster }
   name     = "${var.iam_role_name}-${each.value.name}"

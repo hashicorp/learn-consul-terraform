@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 variable "hcp_consul_cluster_id" {
   type        = string
   description = "HCP Consul Cluster ID"

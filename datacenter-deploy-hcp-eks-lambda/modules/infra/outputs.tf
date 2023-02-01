@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "vpc_subnets_lambda_registrator" {
   value = module.vpc.private_subnets
 }
