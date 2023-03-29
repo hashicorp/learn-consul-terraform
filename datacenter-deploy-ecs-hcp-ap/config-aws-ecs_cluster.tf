@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_ecs_cluster" "clusters" {
   for_each = { for cluster in var.ecs_ap_globals.ecs_clusters : cluster.name => cluster }
   name     = each.value.name

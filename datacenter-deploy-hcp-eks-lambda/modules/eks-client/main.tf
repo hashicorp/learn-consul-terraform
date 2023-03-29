@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 module "api_gateway_crd" {
   source = "../../modules/api-gw-crd"
 }

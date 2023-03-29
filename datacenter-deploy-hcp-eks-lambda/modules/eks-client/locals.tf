@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 locals {
   consul_resources_path_service_defaults   = "./modules/eks-client/hashicups/consul_resources/service-defaults/*"
   consul_resources_path_service-intentions = "./modules/eks-client/hashicups/consul_resources/service-intentions/*"

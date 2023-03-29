@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_lb" "example_client_app" {
   internal           = false
   load_balancer_type = local.load_balancer_type

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "hcp_aws_network_peering" "default" {
   peer_account_id = data.aws_caller_identity.current.account_id
   peering_id      = local.peering_id

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 ##Bootstrap Token
 resource "random_uuid" "bootstrap_token" {
   #count = var.acls ? 1 : 0

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "vm_client" {
   value = azurerm_linux_virtual_machine.consul_client[0].public_ip_address
 }
